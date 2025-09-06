@@ -1,0 +1,14 @@
+.ant-layout-sider .ant-menu-inline-collapsed {
+  width: 80px !important; /* đồng bộ với collapsedWidth bạn set */
+}
+.ant-menu-inline {
+  border-inline-end: none !important;
+}
+.ant-menu-item-selected {
+  background-color: #ff5252 !important;
+  color: white !important;
+  font-weight: 500;
+}
+.ant-menu-light .ant-menu-submenu-selected > .ant-menu-submenu-title {
+  color: #ff5252 !important;
+}
