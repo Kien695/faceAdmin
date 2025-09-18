@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import logo from "../../assets/images.jfif";
 import brand from "../../assets/1750047766437_logo.jpg";
-import logoUser from "../../assets/avatar-user.png";
+
 import "./style.css";
 import {
   FaBlogger,
@@ -13,12 +13,16 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { MdOutlineCategory, MdOutlineDashboard } from "react-icons/md";
 import { PiSlideshowFill } from "react-icons/pi";
 import { Badge, Button, Dropdown, Layout, Menu, theme } from "antd";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { FaUserGroup } from "react-icons/fa6";
 import { IoBagCheckOutline, IoLogoBuffer } from "react-icons/io5";
 import { CgLogOut } from "react-icons/cg";
+import LogoInfo from "../../components/LogoInfo";
+import { TfiControlEject } from "react-icons/tfi";
 const { Header, Sider, Content } = Layout;
 const App = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const items = [
     {
@@ -59,33 +63,41 @@ const App = () => {
     },
   ];
   const item1s = [
-    { key: "1", icon: <MdOutlineDashboard />, label: "Trang chủ" },
-    { key: "2", icon: <FaProductHunt />, label: "Sản phẩm" },
+    {
+      key: "/",
+      icon: <MdOutlineDashboard />,
+      label: "Trang chủ",
+    },
+    {
+      key: "/products",
+      icon: <FaProductHunt />,
+      label: "Sản phẩm",
+    },
 
     {
-      key: "3",
       label: "Danh mục",
       icon: <MdOutlineCategory />,
       children: [
-        { key: "4", label: "Danh mục chính" },
-        { key: "5", label: "Danh mục phụ" },
+        { key: "/categories", label: "Danh mục chính" },
+        { key: "/subCategories", label: "Danh mục phụ" },
       ],
     },
-    { key: "6", icon: <FaUserGroup />, label: "Người dùng" },
-    { key: "7", icon: <IoBagCheckOutline />, label: "Đơn hàng" },
+    { key: "/users", icon: <FaUserGroup />, label: "Người dùng" },
+    { key: "/orders", icon: <IoBagCheckOutline />, label: "Đơn hàng" },
     {
       key: "8",
       label: "Banner",
       icon: <PiSlideshowFill />,
       children: [
-        { key: "9", label: "Banner home" },
-        { key: "10", label: "Banner list 1" },
-        { key: "11", label: "Banner list 2" },
+        { key: "/bannerHome", label: "Banner home" },
+        { key: "/bannerListOne", label: "Banner list 1" },
+        { key: "/bannerListTwo", label: "Banner list 2" },
       ],
     },
-    { key: "12", icon: <FaBlogger />, label: "Blogs" },
-    { key: "13", icon: <IoLogoBuffer />, label: "Logo cửa hàng" },
-    { key: "14", icon: <FaCriticalRole />, label: "Phân quyền" },
+    { key: "/blogs", icon: <FaBlogger />, label: "Blogs" },
+    { key: "/logo", icon: <IoLogoBuffer />, label: "Logo cửa hàng" },
+    { key: "/roles", icon: <TfiControlEject />, label: "Nhóm quyền" },
+    { key: "/permission", icon: <FaCriticalRole />, label: "Phân quyền" },
     { key: "15", icon: <CgLogOut />, label: "Đăng xuất" },
   ];
   return (
@@ -105,7 +117,13 @@ const App = () => {
             src={collapsed ? logo : brand}
             className={collapsed ? "h-12 w-[60px]" : "h-12 w-[200px]"}
           />
-          <Menu defaultSelectedKeys={["1"]} mode="inline" items={item1s} />
+          <Menu
+            defaultSelectedKeys={["1"]}
+            selectedKeys={[location.pathname]}
+            onClick={(e) => navigate(e.key)}
+            mode="inline"
+            items={item1s}
+          />
         </div>
       </Sider>
 
@@ -134,7 +152,7 @@ const App = () => {
                 <FaRegBell className="text-[22px]" />
               </Badge>
             </Dropdown>
-            <img src={logoUser} alt="" className="w-8 h-8 rounded-full" />
+            <LogoInfo />
           </div>
         </Header>
 

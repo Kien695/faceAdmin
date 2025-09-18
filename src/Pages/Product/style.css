@@ -1,0 +1,20 @@
+.ant-btn-variant-solid {
+  background: #ff5252;
+}
+.ant-checkbox-inner {
+  border-color: #ff5252 !important;
+}
+:where(.ant-checkbox-checked) .ant-checkbox-inner {
+  background-color: #ff5252 !important;
+  border-color: #ff5252 !important;
+}
+:where(.css-dev-only-do-not-override-1v28nim).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-1v28nim).ant-table-wrapper
+  .ant-table-thead
+  > tr
+  > td {
+  white-space: nowrap !important;
+}

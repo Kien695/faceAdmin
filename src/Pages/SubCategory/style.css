@@ -1,0 +1,7 @@
+.subcategory-menu .ant-menu-submenu-title {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  background-color: #fee2e2;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
