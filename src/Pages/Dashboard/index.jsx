@@ -189,7 +189,7 @@ export default function Dashboard() {
         <div className="flex  text-[18px] font-[500] text-[#ff5252] rounded-md  w-full p-5 bg-white">
           Đơn hàng gần đây
         </div>
-        <div class="relative overflow-x-auto  sm:rounded-lg">
+        <div className="relative overflow-x-auto  sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-150 dark:bg-gray-700 dark:text-gray-500">
               <tr>
@@ -330,7 +330,7 @@ export default function Dashboard() {
                 </tr>
               )}
               <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
-                <td class="px-3 py-3 text-[15px] font-[600]">
+                <td className="px-3 py-3 text-[15px] font-[600]">
                   <div
                     onClick={() => showOpenCart(1)}
                     className="text-[12px] p-2 bg-[rgba(0,0,0,0.1)] rounded-full"
@@ -338,23 +338,25 @@ export default function Dashboard() {
                     {isOpenCart === 1 ? <TfiAngleDown /> : <TfiAngleUp />}
                   </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap">
                   68bb9582228db479bbedf3c2
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap">
                   Thanh toán khi nhận hàng
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">Tấn Kiên</td>
-                <td class="px-6 py-4 whitespace-nowrap">123456789</td>
-                <td class="px-6 py-4 whitespace-nowrap">Đức Phổ, Quảng Ngãi</td>
-                <td class="px-6 py-4">$2999</td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap">Tấn Kiên</td>
+                <td className="px-6 py-4 whitespace-nowrap">123456789</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  Đức Phổ, Quảng Ngãi
+                </td>
+                <td className="px-6 py-4">$2999</td>
+                <td className="px-6 py-4 whitespace-nowrap">
                   dp1.1a2kien@gmail.com
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap">
                   12345567777777777777bb
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td className="px-6 py-4 whitespace-nowrap">
                   <Select
                     defaultValue="pending"
                     style={{ width: 140 }}

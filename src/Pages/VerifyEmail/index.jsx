@@ -6,18 +6,44 @@ import { CiLogin } from "react-icons/ci";
 import { RiRegisteredLine } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import OtpInputs from "../../components/inputOTP";
+import { postData } from "../../untils/api";
+import { useContext } from "react";
+import { MyContext } from "../../App";
 export default function VerifyEmail() {
+  const navigate = useNavigate();
+  const context = useContext(MyContext);
   const [otp, setOtp] = React.useState("");
+
   const handleComplete = (code) => {
     setOtp(code);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("OTP nhập:", otp);
-    // call API xác minh OTP ở đây
+
+    try {
+      const res = await postData("/api/userAdmin/verifyEmail", {
+        email: localStorage.getItem("userEmail"),
+        otp: otp,
+      });
+
+      // kiểm tra status BE trả về
+      if (res.success) {
+        context.openAlertBox("success", res.message);
+        localStorage.removeItem("userEmail");
+        navigate("/register");
+      } else {
+        context.openAlertBox("error", res.message || "Mã OTP không chính xác!");
+      }
+    } catch (error) {
+      if (error.response) {
+        context.openAlertBox("error", error.response.data.message);
+      } else {
+        context.openAlertBox("error", "Không thể kết nối server!");
+      }
+    }
   };
   return (
     <div className="p-5 mb-6">
@@ -52,13 +78,15 @@ export default function VerifyEmail() {
         </div>
         <div className="text-[14px]">
           Mã OTP vừa gửi đến:{" "}
-          <span className="text-[#ff5252]">dp1.1a2kien@gmail.com</span>
+          <span className="text-[#ff5252]">
+            {localStorage.getItem("userEmail")}
+          </span>
         </div>
 
-        <form action="">
+        <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-5">
             <OtpInputs length={6} onComplete={handleComplete} />
-            <Button type="primary" danger size="large">
+            <Button type="primary" danger size="large" htmlType="submit">
               Xác nhận
             </Button>
           </div>

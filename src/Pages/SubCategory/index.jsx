@@ -1,124 +1,94 @@
-import React from "react";
+import React, { useState } from "react";
 import "./style.css";
-import {
-  AppstoreOutlined,
-  MailOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-import { Menu } from "antd";
-const items = [
-  {
-    label: <span className=" w-full block p-4 rounded ">Navigation One</span>,
 
-    children: [
-      {
-        label: "Item 1",
-        type: "group",
-        children: [
-          { key: "1", label: "Option 1" },
-          { key: "2", label: "Option 2" },
-        ],
-      },
-    ],
-  },
+import { RiDeleteBin5Line, RiEdit2Line } from "react-icons/ri";
+import AddSubCategory from "../../components/AddSubCategory";
+import { Flex, Menu } from "antd";
+import { MyContext } from "../../App";
+import { useContext } from "react";
+import { useMemo } from "react";
 
-  {
-    label: <span className=" w-full block p-4 rounded ">Navigation One</span>,
+import { RiArrowRightSLine, RiArrowDownSLine } from "react-icons/ri";
 
-    children: [
-      {
-        label: "Item 1",
-        type: "group",
-        children: [
-          { key: "1", label: "Option 1" },
-          { key: "2", label: "Option 2" },
-        ],
-      },
-      {
-        label: "Item 2",
-        type: "group",
-        children: [
-          { key: "3", label: "Option 3" },
-          { key: "4", label: "Option 4" },
-        ],
-      },
-    ],
-  },
-  {
-    label: <span className=" w-full block p-4 rounded ">Navigation One</span>,
+const CategoryList = ({ categories, level = 0 }) => {
+  const [expanded, setExpanded] = useState({}); // lưu trạng thái mở/đóng
 
-    children: [
-      {
-        label: "Item 1",
-        type: "group",
-        children: [
-          { key: "1", label: "Option 1" },
-          { key: "2", label: "Option 2" },
-        ],
-      },
-      {
-        label: "Item 2",
-        type: "group",
-        children: [
-          { key: "3", label: "Option 3" },
-          { key: "4", label: "Option 4" },
-        ],
-      },
-    ],
-  },
-  {
-    label: <span className=" w-full block p-4 rounded ">Navigation One</span>,
+  const toggleExpand = (id) => {
+    setExpanded((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
-    children: [
-      {
-        label: "Item 1",
-        type: "group",
-        children: [
-          { key: "1", label: "Option 1" },
-          { key: "2", label: "Option 2" },
-        ],
-      },
-      {
-        label: "Item 2",
-        type: "group",
-        children: [
-          { key: "3", label: "Option 3" },
-          { key: "4", label: "Option 4" },
-        ],
-      },
-    ],
-  },
-  {
-    label: <span className=" w-full block p-4 rounded ">Navigation One</span>,
-
-    children: [
-      {
-        label: "Item 1",
-        type: "group",
-        children: [
-          { key: "1", label: "Option 1" },
-          { key: "2", label: "Option 2" },
-        ],
-      },
-      {
-        label: "Item 2",
-        type: "group",
-        children: [
-          { key: "3", label: "Option 3" },
-          { key: "4", label: "Option 4" },
-        ],
-      },
-    ],
-  },
-];
-export default function SubCategory() {
   return (
-    <div className="subcategory-menu ">
-      <Menu
-        style={{ width: "100%", padding: "15px" }}
-        mode="inline"
-        items={items}
-      />
+    <ul>
+      {categories.map((cat) => {
+        const hasChildren = cat.children?.length > 0;
+        const isOpen = expanded[cat._id];
+
+        return (
+          <li key={`${cat._id}-${level}`} className="mb-2">
+            <div
+              onClick={() => hasChildren && toggleExpand(cat._id)}
+              className={`flex justify-between items-center p-2 rounded cursor-pointer ${
+                level === 0 ? "bg-gray-100 text-[15px] font-[500]" : "bg-white"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                {/* icon mũi tên chỉ hiện khi có children */}
+
+                <span className="ml-10">{"-- ".repeat(level) + cat.name}</span>
+              </div>
+
+              <div className="flex gap-3 text-gray-600">
+                <div className="flex gap-2">
+                  <button>
+                    <RiEdit2Line className="text-[17px]" />
+                  </button>
+                  <button>
+                    <RiDeleteBin5Line className="text-[17px]" />
+                  </button>
+                </div>
+                {hasChildren && (
+                  <span className="text-gray-600">
+                    {isOpen ? (
+                      <RiArrowDownSLine className="text-[18px]" />
+                    ) : (
+                      <RiArrowRightSLine className="text-[18px]" />
+                    )}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* render children khi đang mở */}
+            {isOpen && hasChildren && (
+              <CategoryList categories={cat.children} level={level + 1} />
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+export default function SubCategory() {
+  const context = useContext(MyContext);
+
+  // Không cần categoryTree nữa vì API đã trả về children
+  const categories = context.catData || [];
+
+  return (
+    <div className="bg-white p-2 rounded-md shadow-md">
+      <div className="px-2 py-4 text-[20px] font-[600] text-[#ff5252]">
+        Danh mục phụ sản phẩm
+      </div>
+      <Flex gap="middle" vertical>
+        <AddSubCategory />
+        <div>
+          <CategoryList categories={categories} />
+        </div>
+      </Flex>
     </div>
   );
 }

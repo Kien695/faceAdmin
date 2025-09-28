@@ -15,3 +15,6 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: #ff5252;
 }
+.ant-spin-dot-holder {
+  color: #ff5252 !important;
+}

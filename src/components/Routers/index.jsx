@@ -16,14 +16,24 @@ import Blog from "../../Pages/Blogs";
 import LogoShop from "../../Pages/LogoShop";
 import Role from "../../Pages/Role";
 import Permission from "../../Pages/Permission";
+import PrivateRouters from "../PrivateRouter";
+import MyAccount from "../../Pages/MyAccount";
 export const routers = [
   {
     path: "/",
-    element: <LayoutDefault />,
+    element: (
+      <PrivateRouters>
+        <LayoutDefault />
+      </PrivateRouters>
+    ),
     children: [
       {
         path: "/",
         element: <Dashboard />,
+      },
+      {
+        path: "/profile",
+        element: <MyAccount />,
       },
       {
         path: "/products",
