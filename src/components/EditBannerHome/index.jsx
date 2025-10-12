@@ -1,16 +1,15 @@
-import { Button, Flex, Input, Modal, Spin, Upload } from "antd";
-import React, { useContext, useRef, useState } from "react";
+import { Button, Flex, Modal, Spin, Upload } from "antd";
+import React from "react";
+import { useContext } from "react";
 import { CiEdit } from "react-icons/ci";
-import { PlusOutlined } from "@ant-design/icons";
 import { MyContext } from "../../App";
-import { postData, putData } from "../../untils/api";
-export default function EditCategory({ category, onSuccess }) {
+import { PlusOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { putData } from "../../untils/api";
+export default function EditBannerHome({ banner, onSuccess }) {
   const context = useContext(MyContext);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const inputRefs = {
-    name: useRef(),
-  };
   const uploadButton = (
     <div className="flex flex-col items-center justify-center border border-dashed hover:border-red-500 border-gray-300 rounded-md p-4 cursor-pointer text-gray-500">
       <PlusOutlined className="text-xl" />
@@ -18,10 +17,7 @@ export default function EditCategory({ category, onSuccess }) {
     </div>
   );
   const [formData, setFormData] = useState({
-    name: category?.name,
-    images: category?.images,
-    parentCatName: "",
-    parentId: "",
+    images: banner.images || "",
   });
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,7 +25,6 @@ export default function EditCategory({ category, onSuccess }) {
 
     try {
       const body = new FormData();
-      body.append("name", formData.name);
 
       // Nếu là file mới thì append file
       if (formData.images && typeof formData.images !== "string") {
@@ -39,14 +34,14 @@ export default function EditCategory({ category, onSuccess }) {
         body.append("images", formData.images || "");
       }
 
-      const res = await putData(`/api/category/update/${category?._id}`, body);
+      const res = await putData(`/api/banner/edit/${banner._id}`, body);
 
       if (res.success) {
         context.openAlertBox("success", res.message);
-        setFormData({ name: "", images: "" });
+        setFormData({ images: res.data?.imageUrl || "" });
         setOpen(false);
         if (onSuccess) {
-          onSuccess(res.category);
+          onSuccess();
         }
       }
     } catch (error) {
@@ -59,45 +54,34 @@ export default function EditCategory({ category, onSuccess }) {
       setLoading(false);
     }
   };
-
   return (
-    <>
-      <Flex vertical gap="middle" align="flex-start">
-        {/* Responsive */}
+    <Flex vertical gap="middle" align="flex-start">
+      {/* Responsive */}
 
-        <CiEdit className="text-[16px]" onClick={() => setOpen(true)} />
+      <CiEdit
+        className="text-[20px] cursor-pointer"
+        onClick={() => setOpen(true)}
+      />
 
-        <Modal
-          title="Chỉnh sửa danh mục"
-          centered
-          open={open}
-          onCancel={() => setOpen(false)}
-          width="90%"
-          footer={null} // ẩn nút Ok/Cancel mặc định
-          styles={{
-            body: {
-              maxHeight: "75vh",
-              overflowY: "auto",
-              padding: "10px",
-            },
-          }}
-        >
+      <Modal
+        title="Chỉnh sửa Banner Home"
+        centered
+        open={open}
+        footer={null}
+        onCancel={() => setOpen(false)}
+        width="90%"
+        styles={{
+          body: {
+            maxHeight: "75vh", // giới hạn chiều cao
+            overflowY: "auto",
+            padding: "10px", // bật thanh cuộn dọc}
+          },
+        }}
+      >
+        <div className="flex flex-col gap-4">
           <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-1">
-              <div className="text-[15px]">Tên danh mục</div>
-              <Input
-                size="large"
-                name="name"
-                value={formData.name}
-                ref={inputRefs.name}
-                onChange={(e) => {
-                  setFormData((prev) => ({ ...prev, name: e.target.value }));
-                }}
-              />
-            </div>
-
-            <div className="mt-4">
-              <div className="text-[15px] mb-2">Thêm ảnh</div>
+            <div>
+              <div className="text-[15px] mb-2">Upload Banner</div>
               <Upload
                 listType="picture"
                 maxCount={1}
@@ -127,7 +111,6 @@ export default function EditCategory({ category, onSuccess }) {
                 {uploadButton}
               </Upload>
             </div>
-
             <div className="flex justify-end gap-2 mt-6">
               <Button onClick={() => setOpen(false)}>Hủy bỏ</Button>
               <Button type="primary" htmlType="submit" disabled={loading}>
@@ -141,8 +124,8 @@ export default function EditCategory({ category, onSuccess }) {
               </Button>
             </div>
           </form>
-        </Modal>
-      </Flex>
-    </>
+        </div>
+      </Modal>
+    </Flex>
   );
 }

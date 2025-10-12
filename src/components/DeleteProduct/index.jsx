@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
 import Swal from "sweetalert2";
 import { FaHandsHoldingCircle } from "react-icons/fa6";
-import { RiDeleteBinLine } from "react-icons/ri";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import { deleteData } from "../../untils/api";
 import { MyContext } from "../../App";
 
-export default function DeleteCategory({ category, onSuccess }) {
+export default function DeleteProduct({ product, onSuccess }) {
   const context = useContext(MyContext);
   const handleDelete = async () => {
     Swal.fire({
@@ -20,7 +20,9 @@ export default function DeleteCategory({ category, onSuccess }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await deleteData(`/api/category/delete/${category}`);
+          const res = await deleteData(
+            `/api/product/deleteProduct/${product._id}`
+          );
           if (res.success) {
             context.openAlertBox("success", res.message);
             if (onSuccess) onSuccess();
@@ -38,7 +40,7 @@ export default function DeleteCategory({ category, onSuccess }) {
   };
   return (
     <>
-      <RiDeleteBinLine
+      <RiDeleteBin6Line
         className="text-[16px] cursor-pointer"
         onClick={handleDelete}
       />

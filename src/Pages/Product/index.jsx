@@ -1,49 +1,160 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./style.css";
-import { Button, Modal, Flex, Input, Rate, Select, Table } from "antd";
+import { Button, Modal, Flex, Input, Rate, Select, Table, Space } from "antd";
 import { MdOutlineSearch } from "react-icons/md";
 import { BiFilterAlt } from "react-icons/bi";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 import { Editor } from "@tinymce/tinymce-react";
 import { useRef } from "react";
-import { PlusOutlined } from "@ant-design/icons";
+
 import { Image, Upload } from "antd";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import AddProduct from "../../components/AddProduct";
+import { getData } from "../../untils/api";
+import { MyContext } from "../../App";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import EditProduct from "../../components/EditProduct";
+import DetailProduct from "../../components/DetailProduct";
+import DeleteProduct from "../../components/DeleteProduct";
 const columns = [
   { title: "Sản phẩm", dataIndex: "product" },
   { title: "Danh mục", dataIndex: "category" },
-  { title: "Danh mục phụ", dataIndex: "subCategory" },
+
   { title: "Giá", dataIndex: "price" },
   { title: "Đã bán", dataIndex: "sale" },
   { title: "Còn lại", dataIndex: "stock" },
   { title: "Đánh giá", dataIndex: "rating" },
   { title: "Hành động", dataIndex: "action" },
 ];
-const dataSource = Array.from({ length: 20 }).map((_, i) => ({
-  key: i,
-  product: `Women Wide Leg High-Rise Light Fade Stretchable Jeans`,
-  category: "Fashion",
-  subCategory: "Women",
-  price: 300,
-  sale: 45,
-  stock: 100,
-  rating: <Rate disabled defaultValue={2} style={{ fontSize: 15 }} />,
-  action: "Thêm",
-}));
-const getBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
+
 export default function Product() {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [fileList, setFileList] = useState([]);
+  const [showSort, setShowSort] = useState(false);
+  const [dataProduct, setDataProduct] = useState([]);
+  const [perPage, setPerPage] = useState();
+  const [totalItem, setTotalItem] = useState();
+  const [keyword, setKeyword] = useState("");
+
+  const context = useContext(MyContext);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get("keyword") || "";
+  const page = parseInt(searchParams.get("page")) || 1;
+  const category = searchParams.get("category") || "";
+  const rate = searchParams.get("rate") || "";
+  const sortKey = searchParams.get("sortKey") || "";
+  const sortValue = searchParams.get("sortValue") || "";
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (keyword.trim()) {
+      setSearchParams((prev) => {
+        const params = Object.fromEntries(prev.entries());
+        return { ...params, page: 1, keyword };
+      });
+    }
+  };
+  const handlePageChange = (newPage) => {
+    setSearchParams((prev) => {
+      const params = Object.fromEntries(prev.entries());
+      return { ...params, page: newPage };
+    });
+  };
+  const handleCategoryChange = (value) => {
+    setSearchParams((prev) => {
+      const params = Object.fromEntries(prev.entries()); // giữ lại keyword, page, v.v.
+      if (value) {
+        params.category = value; // cập nhật danh mục được chọn
+      } else {
+        delete params.category; // nếu chọn "Tất cả" thì xóa param category
+      }
+      return params;
+    });
+  };
+  const handleRateChange = (value) => {
+    setSearchParams((prev) => {
+      const params = Object.fromEntries(prev.entries());
+      if (value) {
+        params.rate = value;
+      } else {
+        delete params.rate;
+      }
+      return params;
+    });
+  };
+  const handleSortChange = (value) => {
+    setSearchParams((prev) => {
+      const params = Object.fromEntries(prev.entries());
+      if (value) {
+        const [sortKey, sortValue] = value.split("-");
+        params.sortKey = sortKey;
+        params.sortValue = sortValue;
+      }
+      return params;
+    });
+  };
+  const fetchData = async () => {
+    try {
+      const res = await getData(
+        `/api/product?page=${page}&keyword=${search}&category=${category}&rate=${rate}&sortKey=${sortKey}&sortValue=${sortValue}`
+      );
+
+      if (res.success) {
+        setDataProduct(res.products);
+        setPerPage(res.perPage);
+        setTotalItem(res.totalItems);
+      }
+    } catch (error) {
+      if (error.response) {
+        context.openAlertBox("error", error.response.data.message);
+      } else {
+        context.openAlertBox("error", "Không thể kết nối server!");
+      }
+    }
+  };
+
+  // Gọi khi page/searchParams thay đổi
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchData();
+    }, 400); // debounce tránh gọi API liên tục khi đang gõ
+    return () => clearTimeout(delayDebounce);
+  }, [searchParams.toString()]);
+
+  const dataSource = dataProduct.map((item, index) => ({
+    key: item._id || index,
+    product: (
+      <div className="flex gap-3 w-[320px] items-center">
+        <img
+          src={item.images?.[0]?.url || "cc"}
+          alt=""
+          className="w-[55px] rounded-md"
+        />
+        <div className="flex flex-col gap-1">
+          <div className="leading-none text-[14px] font-[500] line-clamp-2">
+            {item.name}
+          </div>
+          <span className="text-[#ff5252]">{item.brand}</span>
+        </div>
+      </div>
+    ),
+    category: item.category.name,
+
+    price: item.price,
+    sale: item.discountPercentage,
+    stock: item.countInStock,
+    rating: <Rate disabled value={item.rating} style={{ fontSize: 13 }} />,
+    action: (
+      <Space size="small">
+        <EditProduct product={item} onSuccess={() => fetchData()} />
+        <DetailProduct product={item} />
+        <DeleteProduct product={item} onSuccess={() => fetchData()} />
+      </Space>
+    ),
+  }));
   const start = () => {
     setLoading(true);
 
@@ -60,22 +171,14 @@ export default function Product() {
     onChange: onSelectChange,
   };
   const hasSelected = selectedRowKeys.length > 0;
-  //hình
+  const options = [
+    { value: "", label: "Tất cả" }, //  thêm giá trị rỗng cho “Tất cả”
+    ...context.catData.map((item) => ({
+      value: item.name, // gửi name để server dễ lọc
+      label: item.name,
+    })),
+  ];
 
-  const handlePreview = async (file) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setPreviewImage(file.url || file.preview);
-    setPreviewOpen(true);
-  };
-  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
-  const uploadButton = (
-    <button style={{ border: 0, background: "none" }} type="button">
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </button>
-  );
   return (
     <div className="bg-white p-2 rounded-md shadow-md">
       <div className="px-2 pb-6 text-[18px] font-[600] text-[#ff5252]">
@@ -102,251 +205,114 @@ export default function Product() {
           </div>
           <Flex vertical gap="middle" align="flex-start">
             {/* Responsive */}
-            <Button
-              color="danger"
-              variant="solid"
-              onClick={() => setOpen(true)}
-            >
-              Thêm sản phẩm
-            </Button>
-            <Modal
-              title="Thêm sản phẩm"
-              centered
-              open={open}
-              onOk={() => setOpen(false)}
-              onCancel={() => setOpen(false)}
-              width="90%"
-              bodyStyle={{
-                maxHeight: "75vh", // giới hạn chiều cao
-                overflowY: "auto",
-                padding: "10px", // bật thanh cuộn dọc
-              }}
-            >
-              <div className="flex flex-col gap-4">
-                <div>
-                  <div>Tên sản phẩm</div>
-                  <Input size="large" />
-                </div>
-
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <div>Danh mục</div>
-                    <Select
-                      size="large"
-                      defaultValue="lucy"
-                      style={{ width: 250 }}
-                      options={[
-                        { value: "jack", label: "Jack" },
-                        { value: "lucy", label: "Lucy" },
-                        { value: "Yiminghe", label: "yiminghe" },
-                        {
-                          value: "disabled",
-                          label: "Disabled",
-                          disabled: true,
-                        },
-                      ]}
-                    />
-                  </div>
-                  <div>
-                    <div>Danh mục cấp 2</div>
-                    <Select
-                      size="large"
-                      defaultValue="lucy"
-                      style={{ width: 250 }}
-                      options={[
-                        { value: "jack", label: "Jack" },
-                        { value: "lucy", label: "Lucy" },
-                        { value: "Yiminghe", label: "yiminghe" },
-                        {
-                          value: "disabled",
-                          label: "Disabled",
-                          disabled: true,
-                        },
-                      ]}
-                    />
-                  </div>
-                  <div>
-                    <div>Danh mục cấp 3</div>
-                    <Select
-                      size="large"
-                      defaultValue="lucy"
-                      style={{ width: 250 }}
-                      options={[
-                        { value: "jack", label: "Jack" },
-                        { value: "lucy", label: "Lucy" },
-                        { value: "Yiminghe", label: "yiminghe" },
-                        {
-                          value: "disabled",
-                          label: "Disabled",
-                          disabled: true,
-                        },
-                      ]}
-                    />
-                  </div>
-                  <div>
-                    <div>Giá</div>
-                    <Input size="large" className="w-[250px]" />
-                  </div>
-                </div>
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <div>Giảm giá</div>
-                    <Input size="large" className="w-[250px]" />
-                  </div>
-                  <div>
-                    <div>Nổi bật</div>
-                    <Select
-                      size="large"
-                      defaultValue="Có"
-                      style={{ width: 250 }}
-                      options={[
-                        { value: "true", label: "Có" },
-                        { value: "false", label: "Không" },
-                      ]}
-                    />
-                  </div>
-                  <div>
-                    <div>Thương hiệu</div>
-                    <Input size="large" className="w-[250px]" />
-                  </div>
-                  <div>
-                    <div>Kho</div>
-                    <Input size="large" className="w-[250px]" />
-                  </div>
-                </div>
-                <div className="flex items-center ">
-                  <div>
-                    <div>Kích thước</div>
-                    <Select
-                      size="large"
-                      defaultValue="S"
-                      style={{ width: 250 }}
-                      options={[
-                        { value: "s", label: "S" },
-                        { value: "xl", label: "XL" },
-                      ]}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div>Mô tả sản phẩm</div>
-                  <Editor
-                    apiKey="0i4qgvltt8xiuzo0ebuptffq6jiefu5i2annb2aysu6abom0"
-                    init={{
-                      height: 300,
-                      plugins:
-                        "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
-                      toolbar:
-                        "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
-                    }}
-                  />
-                </div>
-                <div>
-                  <div>Upload ảnh</div>
-                  <Upload
-                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                    listType="picture-card"
-                    fileList={fileList}
-                    onPreview={handlePreview}
-                    onChange={handleChange}
-                  >
-                    {fileList.length >= 8 ? null : uploadButton}
-                  </Upload>
-                  {previewImage && (
-                    <Image
-                      wrapperStyle={{ display: "none" }}
-                      preview={{
-                        visible: previewOpen,
-                        onVisibleChange: (visible) => setPreviewOpen(visible),
-                        afterOpenChange: (visible) =>
-                          !visible && setPreviewImage(""),
-                      }}
-                      src={previewImage}
-                    />
-                  )}
-                </div>
-              </div>
-            </Modal>
+            <AddProduct onSuccess={() => fetchData()} />
           </Flex>
         </Flex>
-        <div className="flex items-end justify-between">
-          <div className=" w-[80%] flex items-end min-h-[60px]">
-            <Button
-              color="danger"
-              variant="solid"
-              onClick={() => setShowFilter(!showFilter)}
-              className="flex items-center gap-2"
-            >
-              <BiFilterAlt />
-              Lọc
-              {showFilter ? <FaAngleLeft /> : <FaAngleRight />}
-            </Button>
-            {showFilter && (
-              <div className=" ml-4 flex gap-8">
-                <div className="flex flex-col gap-1">
-                  <div className="font-[500] text-[15px]">Theo danh mục</div>
-                  <Select
-                    defaultValue="lucy"
-                    style={{ width: 120 }}
-                    options={[
-                      { value: "jack", label: "Jack" },
-                      { value: "lucy", label: "Lucy" },
-                      { value: "Yiminghe", label: "yiminghe" },
-                      { value: "disabled", label: "Disabled", disabled: true },
-                    ]}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <div className="font-[500] text-[15px]">
-                    Theo danh mục phụ
+        <div className="flex items-end justify-between px-6">
+          <div className="flex gap-6">
+            <div className=" w-[80%] flex items-end min-h-[60px]">
+              <Button
+                color="danger"
+                variant="solid"
+                onClick={() => setShowFilter(!showFilter)}
+                className="flex items-center gap-2"
+              >
+                <BiFilterAlt />
+                Lọc
+                {showFilter ? <FaAngleLeft /> : <FaAngleRight />}
+              </Button>
+              {showFilter && (
+                <div className=" ml-2 flex gap-3">
+                  <div className="flex flex-col gap-1">
+                    <div className="font-[500] text-[15px]">Theo danh mục</div>
+                    <Select
+                      value={category || ""}
+                      style={{ width: 120 }}
+                      onChange={handleCategoryChange}
+                      options={options}
+                    />
                   </div>
-                  <Select
-                    defaultValue="lucy"
-                    style={{ width: 120 }}
-                    options={[
-                      { value: "jack", label: "Jack" },
-                      { value: "lucy", label: "Lucy" },
-                      { value: "Yiminghe", label: "yiminghe" },
-                      { value: "disabled", label: "Disabled", disabled: true },
-                    ]}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <div className="font-[500] text-[15px]">
-                    Theo danh mục phụ cấp 3
+                  <div className="flex flex-col gap-1">
+                    <div className="font-[500] text-[15px]">Theo đánh giá</div>
+                    <Select
+                      value={rate || ""}
+                      style={{ width: 120 }}
+                      onChange={handleRateChange}
+                      options={[
+                        { value: "1", label: "1" },
+                        { value: "2", label: "2" },
+                        { value: "3", label: "3" },
+                        { value: "4", label: "4" },
+                        { value: "5", label: "5" },
+                        { value: "", label: "Tất cả" },
+                      ]}
+                    />
                   </div>
-
-                  <Select
-                    defaultValue="lucy"
-                    style={{ width: 120 }}
-                    options={[
-                      { value: "jack", label: "Jack" },
-                      { value: "lucy", label: "Lucy" },
-                      { value: "Yiminghe", label: "yiminghe" },
-                      { value: "disabled", label: "Disabled", disabled: true },
-                    ]}
-                  />
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+            <div className=" w-[80%] flex items-end min-h-[60px]">
+              <Button
+                color="danger"
+                variant="solid"
+                onClick={() => setShowSort(!showSort)}
+                className="flex items-center gap-2"
+              >
+                <BiFilterAlt />
+                Xăp xếp
+                {showSort ? <FaAngleLeft /> : <FaAngleRight />}
+              </Button>
+              {showSort && (
+                <div className=" ml-2 flex gap-8">
+                  <div className="flex flex-col gap-1">
+                    <div className="font-[500] text-[15px]">Theo giá</div>
+                    <Select
+                      style={{ width: 130 }}
+                      onChange={handleSortChange}
+                      defaultValue="Giá giảm dần"
+                      value={
+                        sortKey && sortValue
+                          ? `${sortKey}-${sortValue}`
+                          : undefined
+                      }
+                      options={[
+                        { value: "price-asc", label: "Giá tăng dần" },
+                        { value: "price-desc", label: "Giá giảm dần" },
+                      ]}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-
-          <Input
-            size="large"
-            status="error"
-            style={{ width: "200px" }}
-            placeholder="Tìm kiếm..."
-            prefix={<MdOutlineSearch />}
-          />
+          <form onSubmit={handleSubmit}>
+            <Space>
+              <Input
+                size="large"
+                placeholder="Tìm kiếm..."
+                value={keyword}
+                style={{ width: 250 }}
+                onChange={(e) => setKeyword(e.target.value)}
+              />
+              <Button
+                type="primary"
+                htmlType="submit"
+                icon={<MdOutlineSearch />}
+              ></Button>
+            </Space>
+          </form>
         </div>
 
         <Table
           rowSelection={rowSelection}
           columns={columns}
           dataSource={dataSource}
-          pagination={{ pageSize: 5 }}
+          pagination={{
+            current: page,
+            total: totalItem,
+            pageSize: perPage,
+            onChange: handlePageChange,
+          }}
         />
       </Flex>
     </div>

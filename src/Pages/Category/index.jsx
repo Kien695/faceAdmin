@@ -24,7 +24,7 @@ export default function Category() {
     setLoading(true);
     try {
       const res = await getData("/api/category/");
-      console.log(res);
+
       if (res.success) {
         setData(res.data);
         context.setCatData(res.data);
@@ -56,7 +56,7 @@ export default function Category() {
             );
           }}
         />
-        <DeleteCategory category={item} onSuccess={() => fetchData()} />
+        <DeleteCategory category={item._id} onSuccess={() => fetchData()} />
       </Space>
     ),
   }));

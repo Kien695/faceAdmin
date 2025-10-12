@@ -1,0 +1,32 @@
+.categoryImage img {
+  height: 120px;
+  width: 100%;
+  object-fit: cover;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+}
+.categoryImage img:hover {
+  border: 3px solid red;
+}
+.categoryImage .swiper-button-next {
+  width: 30px;
+
+  min-width: 30px;
+  right: 0;
+  border-radius: 0;
+  background-color: rgba(255, 255, 240, 0.5);
+}
+.categoryImage .swiper-button-prev {
+  width: 10px !important;
+
+  min-width: 30px;
+  border-radius: 0;
+  left: 0;
+  background-color: rgba(255, 255, 240, 0.5);
+}
+.categoryImage .swiper-button-prev::after {
+  color: #ff5252;
+}
+.categoryImage .swiper-button-next::after {
+  color: #ff5252;
+}

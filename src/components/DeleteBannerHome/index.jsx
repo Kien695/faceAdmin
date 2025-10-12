@@ -1,13 +1,12 @@
-import React, { useContext } from "react";
+import React from "react";
 import Swal from "sweetalert2";
-import { FaHandsHoldingCircle } from "react-icons/fa6";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { deleteData } from "../../untils/api";
+import { useContext } from "react";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import { MyContext } from "../../App";
-
-export default function DeleteCategory({ category, onSuccess }) {
+import { deleteData } from "../../untils/api";
+export default function DeleteBannerHome({ banner, onSuccess }) {
   const context = useContext(MyContext);
-  const handleDelete = async () => {
+  const handleDelete = () => {
     Swal.fire({
       title: "Bạn chắc muốn xóa nó?",
       text: "Bạn sẽ không khôi phục lại được!",
@@ -20,7 +19,7 @@ export default function DeleteCategory({ category, onSuccess }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await deleteData(`/api/category/delete/${category}`);
+          const res = await deleteData(`/api/banner/delete/${banner}`);
           if (res.success) {
             context.openAlertBox("success", res.message);
             if (onSuccess) onSuccess();
@@ -37,11 +36,9 @@ export default function DeleteCategory({ category, onSuccess }) {
     });
   };
   return (
-    <>
-      <RiDeleteBinLine
-        className="text-[16px] cursor-pointer"
-        onClick={handleDelete}
-      />
-    </>
+    <RiDeleteBin6Line
+      className="text-[20px] cursor-pointer"
+      onClick={handleDelete}
+    />
   );
 }

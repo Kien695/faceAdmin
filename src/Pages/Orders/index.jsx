@@ -26,7 +26,7 @@ export default function Order() {
           prefix={<MdOutlineSearch />}
         />
       </div>
-      <div class="relative overflow-x-auto  sm:rounded-lg">
+      <div className="relative overflow-x-auto  sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-150 dark:bg-gray-700 dark:text-gray-500">
             <tr>
@@ -175,21 +175,25 @@ export default function Order() {
                   {isOpenCart === 1 ? <TfiAngleDown /> : <TfiAngleUp />}
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td className="px-6 py-4 whitespace-nowrap">
                 68bb9582228db479bbedf3c2
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td className="px-6 py-4 whitespace-nowrap">
                 Thanh toán khi nhận hàng
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">Tấn Kiên</td>
-              <td class="px-6 py-4 whitespace-nowrap">123456789</td>
-              <td class="px-6 py-4 whitespace-nowrap">Đức Phổ, Quảng Ngãi</td>
-              <td class="px-6 py-4">$2999</td>
-              <td class="px-6 py-4 whitespace-nowrap">dp1.1a2kien@gmail.com</td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td className="px-6 py-4 whitespace-nowrap">Tấn Kiên</td>
+              <td className="px-6 py-4 whitespace-nowrap">123456789</td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                Đức Phổ, Quảng Ngãi
+              </td>
+              <td className="px-6 py-4">$2999</td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                dp1.1a2kien@gmail.com
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
                 12345567777777777777bb
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td className="px-6 py-4 whitespace-nowrap">
                 <Select
                   defaultValue="pending"
                   style={{ width: 140 }}

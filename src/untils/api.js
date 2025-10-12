@@ -53,8 +53,8 @@ export const putData = async (url, formData, config = {}) => {
 };
 // DELETE
 export const deleteData = async (url, token) => {
+  console.log(apiUrl + url);
   try {
-    console.log(apiUrl + url);
     const response = await axios.delete(apiUrl + url, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
@@ -63,6 +63,25 @@ export const deleteData = async (url, token) => {
     return response.data;
   } catch (error) {
     console.error("DELETE error:", error);
+    throw error;
+  }
+};
+// PATCH
+export const patchData = async (url, formData, config = {}) => {
+  try {
+    console.log(apiUrl + url);
+    const response = await axios.patch(apiUrl + url, formData, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+        ...(formData instanceof FormData
+          ? {}
+          : { "Content-Type": "application/json" }),
+      },
+      ...config,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 };
