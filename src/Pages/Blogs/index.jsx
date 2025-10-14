@@ -63,7 +63,7 @@ export default function Blog() {
     ),
     action: (
       <Space size="middle">
-        <EditBlog />
+        <EditBlog blog={item} onSuccess={() => fetchData()} />
         <DeleteBlog blog={item} onSuccess={() => fetchData()} />
       </Space>
     ),

@@ -30,23 +30,16 @@ export default function EditCategory({ category, onSuccess }) {
     try {
       const body = new FormData();
       body.append("name", formData.name);
-
-      // Nếu là file mới thì append file
-      if (formData.images && typeof formData.images !== "string") {
-        body.append("images", formData.images);
-      } else {
-        // Nếu là ảnh cũ (string url) thì vẫn append string
-        body.append("images", formData.images || "");
-      }
+      body.append("images", formData.images);
 
       const res = await putData(`/api/category/update/${category?._id}`, body);
 
       if (res.success) {
         context.openAlertBox("success", res.message);
-        setFormData({ name: "", images: "" });
+
         setOpen(false);
         if (onSuccess) {
-          onSuccess(res.category);
+          onSuccess();
         }
       }
     } catch (error) {

@@ -4,7 +4,8 @@ import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { MyContext } from "../../App";
 import { CiEdit } from "react-icons/ci";
 import { Editor } from "@tinymce/tinymce-react";
-export default function EditBlog() {
+import { patchData } from "../../untils/api";
+export default function EditBlog({ blog, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const context = useContext(MyContext);
@@ -14,6 +15,35 @@ export default function EditBlog() {
       <div className="mt-2">Upload</div>
     </div>
   );
+  const [formData, setFormData] = useState({
+    title: blog.title || "",
+    images: blog.images || "",
+    description: blog.description || "",
+  });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const body = new FormData();
+      body.append("title", formData.title);
+      body.append("description", formData.description);
+      body.append("images", formData.images);
+      const res = await patchData(`/api/blog/edit/${blog._id}`, body);
+      if (res.success) {
+        context.openAlertBox("success", res.message);
+        if (onSuccess) onSuccess();
+        setOpen(false);
+      }
+    } catch (error) {
+      if (error.response) {
+        context.openAlertBox("error", error.response.data.message);
+      } else {
+        context.openAlertBox("error", "Không thể kết nối server!");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Flex vertical gap="middle" align="flex-start">
       {/* Responsive */}
@@ -40,15 +70,26 @@ export default function EditBlog() {
         }}
       >
         <div className="flex flex-col gap-4">
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-1">
               <div className="text-[15px]">Tiêu đề</div>
-              <Input size="large" name="title" />
+              <Input
+                size="large"
+                name="title"
+                value={formData.title}
+                onChange={(e) => {
+                  setFormData((prev) => ({ ...prev, title: e.target.value }));
+                }}
+              />
             </div>
             <div className="flex flex-col gap-1">
               <div className="text-[15px]">Mô tả </div>
               <Editor
                 apiKey="0i4qgvltt8xiuzo0ebuptffq6jiefu5i2annb2aysu6abom0"
+                value={formData.description}
+                onEditorChange={(content) => {
+                  setFormData((prev) => ({ ...prev, description: content }));
+                }}
                 init={{
                   height: 300,
                   plugins:
@@ -64,6 +105,28 @@ export default function EditBlog() {
                 listType="picture"
                 maxCount={1}
                 beforeUpload={() => false}
+                fileList={
+                  formData.images
+                    ? [
+                        {
+                          uid: "-1",
+                          name: "image.png",
+                          status: "done",
+                          url:
+                            typeof formData.images === "string"
+                              ? formData.images // ảnh cũ từ server
+                              : URL.createObjectURL(formData.images), // ảnh mới upload
+                        },
+                      ]
+                    : []
+                }
+                onChange={({ fileList }) => {
+                  const file = fileList[0]?.originFileObj;
+                  setFormData((prev) => ({
+                    ...prev,
+                    images: file || "", // lưu file gốc để gửi FormData sau này
+                  }));
+                }}
               >
                 {uploadButton}
               </Upload>
@@ -76,7 +139,7 @@ export default function EditBlog() {
                     <Spin /> Đang xử lí...
                   </div>
                 ) : (
-                  "Thêm mới"
+                  "Cập nhật"
                 )}
               </Button>
             </div>

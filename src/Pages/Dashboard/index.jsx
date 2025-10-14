@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -14,8 +14,11 @@ import { TiShoppingCart } from "react-icons/ti";
 import { FaProductHunt } from "react-icons/fa6";
 import { BiCategory } from "react-icons/bi";
 import { Column } from "@ant-design/plots";
+import AddProduct from "../../components/AddProduct";
+import { getData } from "../../untils/api";
 export default function Dashboard() {
   const [isOpenCart, setIsOpenCart] = React.useState(null);
+  const [data, setData] = useState({});
   const showOpenCart = (index) => {
     if (isOpenCart === index) {
       setIsOpenCart(null);
@@ -95,6 +98,24 @@ export default function Dashboard() {
       inset: 5,
     },
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getData("/api/dashboard");
+        if (res.success) {
+          setData(res.data);
+        }
+      } catch (error) {
+        if (error.response) {
+          context.openAlertBox("error", error.response.data.message);
+        } else {
+          context.openAlertBox("error", "Không thể kết nối server!");
+        }
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <>
       <div className="flex items-center border border-1 border-gray-200 p-6 rounded-lg shadow-md bg-[#f1faff]">
@@ -107,12 +128,9 @@ export default function Dashboard() {
           <div className="text-[18px]">
             Dưới đấy là số thiệu thống kê của của cửa hàng bạn
           </div>
-          <Button
-            type="primary"
-            className="w-1/5 mt-2 flex items-center justify-center"
-          >
-            + Thêm sản phẩm
-          </Button>
+          <div className="w-1/5 mt-2 flex items-center justify-center">
+            <AddProduct />
+          </div>
         </div>
         <div className="w-[20%]">
           <img src={image} alt="" className="w-full" />
@@ -135,7 +153,7 @@ export default function Dashboard() {
                 <FaUsers className="text-[30px]" />
                 <div className="flex flex-col  gap-1 text-[18px] ">
                   <div>Tổng người dùng</div>
-                  <span className="font-bold">200</span>
+                  <span className="font-bold">{data?.user?.total}</span>
                 </div>
               </div>
               <IoStatsChart className="text-[30px] " />
@@ -149,7 +167,7 @@ export default function Dashboard() {
                 <TiShoppingCart className="text-[30px]" />
                 <div className="flex flex-col  gap-1 text-[18px] ">
                   <div>Tổng đơn hàng</div>
-                  <span className="font-bold">500</span>
+                  <span className="font-bold">{data?.order?.total}</span>
                 </div>
               </div>
               <IoStatsChart className="text-[30px] " />
@@ -163,7 +181,7 @@ export default function Dashboard() {
                 <FaProductHunt className="text-[30px]" />
                 <div className="flex flex-col  gap-1 text-[18px] ">
                   <div>Tổng sản phẩm</div>
-                  <span className="font-bold">200</span>
+                  <span className="font-bold">{data?.products?.total}</span>
                 </div>
               </div>
               <IoStatsChart className="text-[30px] " />
@@ -177,7 +195,7 @@ export default function Dashboard() {
                 <BiCategory className="text-[30px]" />
                 <div className="flex flex-col  gap-1 text-[18px] ">
                   <div>Tổng danh mục</div>
-                  <span className="font-bold">200</span>
+                  <span className="font-bold">{data?.category?.total}</span>
                 </div>
               </div>
               <IoStatsChart className="text-[30px] " />

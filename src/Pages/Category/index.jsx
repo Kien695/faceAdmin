@@ -39,8 +39,11 @@ export default function Category() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const dataSource = context.catData?.map((item, index) => ({
+  const dataSource = data.map((item, index) => ({
     key: item._id || index,
     image: <img src={item.images} className="w-[20%]" />,
     categoryName: item.name,
@@ -48,12 +51,9 @@ export default function Category() {
       <Space size="middle">
         <EditCategory
           category={item} // truyền toàn bộ object category
-          onSuccess={(updatedCategory) => {
-            setData((prev) =>
-              prev.map((cat) =>
-                cat._id === updatedCategory._id ? updatedCategory : cat
-              )
-            );
+         
+          onSuccess={() => {
+            fetchData();
           }}
         />
         <DeleteCategory category={item._id} onSuccess={() => fetchData()} />
