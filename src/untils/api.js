@@ -53,7 +53,6 @@ export const putData = async (url, formData, config = {}) => {
 };
 // DELETE
 export const deleteData = async (url, token) => {
-  console.log(apiUrl + url);
   try {
     const response = await axios.delete(apiUrl + url, {
       headers: {
@@ -69,7 +68,6 @@ export const deleteData = async (url, token) => {
 // PATCH
 export const patchData = async (url, formData, config = {}) => {
   try {
-    console.log(apiUrl + url);
     const response = await axios.patch(apiUrl + url, formData, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,

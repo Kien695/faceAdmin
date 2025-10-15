@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import logo from "../../assets/images.jfif";
 import brand from "../../assets/1750047766437_logo.jpg";
 
@@ -19,8 +19,11 @@ import { IoBagCheckOutline, IoLogoBuffer } from "react-icons/io5";
 import { CgLogOut } from "react-icons/cg";
 import LogoInfo from "../../components/LogoInfo";
 import { TfiControlEject } from "react-icons/tfi";
+import { MyContext } from "../../App";
+import { postData } from "../../untils/api";
 const { Header, Sider, Content } = Layout;
 const App = () => {
+  const context = useContext(MyContext);
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
@@ -62,6 +65,31 @@ const App = () => {
       ),
     },
   ];
+  const handleLogout = async () => {
+    try {
+      const res = await postData(
+        `/api/userAdmin/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      if (res.success) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        context.openAlertBox("success", res?.message || "Đăng xuất thành công");
+        context.setIsLogin(false);
+        context.setUserData(null);
+        navigate("/login");
+      }
+    } catch (error) {
+      if (error.response) {
+        context.openAlertBox("error", error.response.data.message);
+      } else {
+        context.openAlertBox("error", "Đăng xuất không thành công");
+      }
+    }
+  };
   const item1s = [
     {
       key: "/",
@@ -98,7 +126,12 @@ const App = () => {
     { key: "/logo", icon: <IoLogoBuffer />, label: "Logo cửa hàng" },
     { key: "/roles", icon: <TfiControlEject />, label: "Nhóm quyền" },
     { key: "/permission", icon: <FaCriticalRole />, label: "Phân quyền" },
-    { key: "15", icon: <CgLogOut />, label: "Đăng xuất" },
+    {
+      key: "15",
+      icon: <CgLogOut />,
+      label: "Đăng xuất",
+      onClick: handleLogout,
+    },
   ];
   return (
     <Layout style={{ minHeight: "100vh" }}>

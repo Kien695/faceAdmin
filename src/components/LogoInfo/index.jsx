@@ -64,7 +64,7 @@ export default function LogoInfo() {
       label: <Link to="/profile">Thông tin cá nhân</Link>,
     },
     {
-      key: "15",
+      key: "3",
       icon: <CgLogOut />,
       label: "Đăng xuất",
       onClick: handleLogout,

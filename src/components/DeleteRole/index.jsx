@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
-import Swal from "sweetalert2";
-import { RiDeleteBin6Line } from "react-icons/ri";
 import { MyContext } from "../../App";
+import Swal from "sweetalert2";
 import { deleteData } from "../../untils/api";
-
-export default function DeleteBlog({ blog, onSuccess }) {
+import { RiDeleteBinLine } from "react-icons/ri";
+export default function DeleteRole({ role, onSuccess }) {
   const context = useContext(MyContext);
   const handleDelete = async () => {
     Swal.fire({
@@ -19,7 +18,7 @@ export default function DeleteBlog({ blog, onSuccess }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await deleteData(`/api/blog/deleteBlog/${blog._id}`);
+          const res = await deleteData(`/api/role/deleted/${role._id}`);
           if (res.success) {
             context.openAlertBox("success", res.message);
             if (onSuccess) onSuccess();
@@ -36,11 +35,9 @@ export default function DeleteBlog({ blog, onSuccess }) {
     });
   };
   return (
-    <>
-      <RiDeleteBin6Line
-        className="text-[18px] cursor-pointer"
-        onClick={handleDelete}
-      />
-    </>
+    <RiDeleteBinLine
+      className="text-[20px] cursor-pointer"
+      onClick={handleDelete}
+    />
   );
 }

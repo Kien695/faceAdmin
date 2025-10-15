@@ -1,7 +1,12 @@
-import React from "react";
-import { Space, Table, Tag } from "antd";
+import React, { useContext, useEffect, useState } from "react";
+import { Button, Flex, Space, Table, Tag } from "antd";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { CiEdit } from "react-icons/ci";
+
+import AddRole from "../../components/AddRole";
+import { getData } from "../../untils/api";
+import { MyContext } from "../../App";
+import EditRole from "../../components/EditRole";
+import DeleteRole from "../../components/DeleteRole";
 const columns = [
   {
     title: "Nhóm quyền",
@@ -16,37 +21,52 @@ const columns = [
     dataIndex: "action",
   },
 ];
-const data = [
-  {
-    role: "Admin chính",
-    description: "Có quyền thực hiện mọi chức năng",
+
+export default function Role() {
+  const [dataRole, setData] = useState([]);
+  const context = useContext(MyContext);
+  const fetChData = async (e) => {
+    try {
+      const res = await getData("/api/role/");
+      if (res.success) {
+        setData(res.data);
+      }
+    } catch (error) {
+      if (error.response) {
+        context.openAlertBox("error", error.response.data.message);
+      } else {
+        context.openAlertBox("error", "Không thể kết nối server!");
+      }
+    }
+  };
+  useEffect(() => {
+    fetChData();
+  }, []);
+  const data = dataRole.map((item) => ({
+    key: item._id,
+    role: item.title,
+    description: (
+      <div
+        className="line-clamp-3"
+        dangerouslySetInnerHTML={{ __html: item.description || "" }}
+      />
+    ),
     action: (
       <Space size="middle">
-        <CiEdit className="text-[16px]" />
-        <RiDeleteBinLine className="text-[16px]" />
+        <EditRole role={item} onSuccess={() => fetChData()} />
+        <DeleteRole role={item} onSuccess={() => fetChData()} />
       </Space>
     ),
-  },
-  {
-    role: "Admin phụ",
-    description: "Có quyền thực hiện các chức năng được phân quyền",
-    action: (
-      <Space size="middle">
-        <CiEdit className="text-[16px]" />
-        <RiDeleteBinLine className="text-[16px]" />
-      </Space>
-    ),
-  },
-  {
-    role: "Cộng tác viên",
-    description: "Có quyền thực hiện các chức năng được phân quyền",
-    action: (
-      <Space size="middle">
-        <CiEdit className="text-[16px]" />
-        <RiDeleteBinLine className="text-[16px]" />
-      </Space>
-    ),
-  },
-];
-const Role = () => <Table columns={columns} dataSource={data} />;
-export default Role;
+  }));
+  return (
+    <div className="bg-white p-2 rounded-md shadow-md">
+      <div className="px-2 pb-6 text-[18px] font-[600] text-[#ff5252]">
+        Danh sách nhóm quyền
+      </div>
+      <Flex gap="middle" vertical>
+        <AddRole onSuccess={() => fetChData()} />
+        <Table columns={columns} dataSource={data} />;
+      </Flex>
+    </div>
+  );
+}
