@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-
+import avatar from "../../assets/avatar-user.png";
 import { Button, Dropdown, Space } from "antd";
 import { CgLogOut } from "react-icons/cg";
 import { FaRegUser } from "react-icons/fa";
@@ -42,11 +42,20 @@ export default function LogoInfo() {
       label: (
         <div className="">
           <div className="flex items-center gap-2">
-            <img
-              src={context?.userData?.avatar}
-              alt="avatar"
-              className="w-4 h-4 rounded-full"
-            />
+            {context?.userData?.avatar ? (
+              <img
+                src={context?.userData?.avatar}
+                alt="avatar"
+                className="w-4 h-4 rounded-full"
+              />
+            ) : (
+              <img
+                src={avatar}
+                alt="default user"
+                className="rounded-md w-[16px]"
+              />
+            )}
+
             <span className="text-[14px] font-[600]">
               {context?.userData?.name}
             </span>
@@ -71,13 +80,26 @@ export default function LogoInfo() {
     },
   ];
   return (
-    <Dropdown menu={{ items }} placement="bottomRight" arrow>
+    <Dropdown
+      menu={{ items }}
+      placement="bottomRight"
+      arrow
+      trigger={["click"]}
+    >
       <div>
-        <img
-          src={context?.userData?.avatar}
-          alt=""
-          className="w-8 h-8 rounded-full"
-        />
+        {context?.userData?.avatar ? (
+          <img
+            src={context?.userData?.avatar}
+            alt=""
+            className="w-8 h-8 rounded-full"
+          />
+        ) : (
+          <img
+            src={avatar}
+            alt="default user"
+            className="rounded-md w-[28px]"
+          />
+        )}
       </div>
     </Dropdown>
   );

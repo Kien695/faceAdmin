@@ -8,6 +8,7 @@ export default function App() {
   const [isLogin, setIsLogin] = React.useState(false);
   const [userData, setUserData] = React.useState(null);
   const [catData, setCatData] = React.useState([]);
+  const [roleData, setRoleData] = React.useState([]);
   useEffect(() => {
     const fetch = async () => {
       const token = localStorage.getItem("accessToken");
@@ -23,6 +24,10 @@ export default function App() {
           const resCat = await getData("/api/category/");
           if (resCat.success) {
             setCatData(resCat.data);
+          }
+          const resRole = await getData("/api/role/");
+          if (resRole) {
+            setRoleData(resRole.data);
           }
         } catch (error) {
           console.log("Lỗi khi fetch user: ", error);
@@ -47,6 +52,8 @@ export default function App() {
     setUserData,
     catData,
     setCatData,
+    roleData,
+    setRoleData,
   };
   return (
     <>

@@ -1,28 +1,31 @@
 import React, { useContext } from "react";
-import { MyContext } from "../../App";
 import Swal from "sweetalert2";
-import { deleteData } from "../../untils/api";
-import { RiDeleteBinLine } from "react-icons/ri";
-export default function DeleteRole({ role, onSuccess }) {
+import { FaHandsHoldingCircle } from "react-icons/fa6";
+
+import { deleteData, patchData } from "../../untils/api";
+import { MyContext } from "../../App";
+import { Button } from "antd";
+
+export default function RestoreProduct({ trash, onSuccess }) {
   const context = useContext(MyContext);
-  const handleDelete = async () => {
-    if (!context?.userData?.role?.permissions.includes("role_delete")) {
-      context.openAlertBox("error", "Bạn không có quyền xóa!");
+  const handleRestore = async () => {
+    if (!context?.userData?.role?.permissions.includes("product_delete")) {
+      context.openAlertBox("error", "Bạn không có quyền khôi phục!");
       return;
     }
     Swal.fire({
-      title: "Bạn chắc muốn xóa nó?",
-      text: "Bạn sẽ không khôi phục lại được!",
+      title: "Bạn chắc muốn khôi phục nó?",
+
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Vâng, xóa nó!",
+      confirmButtonText: "Chấp nhận!",
       cancelButtonText: "Hủy",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await deleteData(`/api/role/deleted/${role._id}`);
+          const res = await patchData(`/api/product/restore/${trash._id}`);
           if (res.success) {
             context.openAlertBox("success", res.message);
             if (onSuccess) onSuccess();
@@ -39,9 +42,10 @@ export default function DeleteRole({ role, onSuccess }) {
     });
   };
   return (
-    <RiDeleteBinLine
-      className="text-[20px] cursor-pointer"
-      onClick={handleDelete}
-    />
+    <>
+      <Button size="small" variant="solid" onClick={handleRestore}>
+        Khôi phục
+      </Button>
+    </>
   );
 }

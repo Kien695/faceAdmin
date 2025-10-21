@@ -7,6 +7,10 @@ import { deleteData } from "../../untils/api";
 export default function DeleteBlog({ blog, onSuccess }) {
   const context = useContext(MyContext);
   const handleDelete = async () => {
+    if (!context?.userData?.role?.permissions.includes("blog_delete")) {
+      context.openAlertBox("error", "Bạn không có quyền xóa!");
+      return;
+    }
     Swal.fire({
       title: "Bạn chắc muốn xóa nó?",
       text: "Bạn sẽ không khôi phục lại được!",

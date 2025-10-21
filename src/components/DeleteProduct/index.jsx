@@ -2,15 +2,19 @@ import React, { useContext } from "react";
 import Swal from "sweetalert2";
 import { FaHandsHoldingCircle } from "react-icons/fa6";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { deleteData } from "../../untils/api";
+import { deleteData, patchData } from "../../untils/api";
 import { MyContext } from "../../App";
 
 export default function DeleteProduct({ product, onSuccess }) {
   const context = useContext(MyContext);
   const handleDelete = async () => {
+    if (!context?.userData?.role?.permissions.includes("product_delete")) {
+      context.openAlertBox("error", "Bạn không có quyền xóa!");
+      return;
+    }
     Swal.fire({
       title: "Bạn chắc muốn xóa nó?",
-      text: "Bạn sẽ không khôi phục lại được!",
+
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -20,7 +24,7 @@ export default function DeleteProduct({ product, onSuccess }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await deleteData(
+          const res = await patchData(
             `/api/product/deleteProduct/${product._id}`
           );
           if (res.success) {
@@ -41,7 +45,7 @@ export default function DeleteProduct({ product, onSuccess }) {
   return (
     <>
       <RiDeleteBin6Line
-        className="text-[16px] cursor-pointer"
+        className="text-[18px] cursor-pointer"
         onClick={handleDelete}
       />
     </>

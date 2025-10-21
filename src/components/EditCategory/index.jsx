@@ -8,6 +8,14 @@ export default function EditCategory({ category, onSuccess }) {
   const context = useContext(MyContext);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const handleClick = () => {
+    if (!context?.userData?.role?.permissions.includes("category_edit")) {
+      context.openAlertBox("error", "Bạn không có quyền chỉnh sửa danh mục!");
+      return;
+    } else {
+      setOpen(true);
+    }
+  };
   const inputRefs = {
     name: useRef(),
   };
@@ -58,7 +66,7 @@ export default function EditCategory({ category, onSuccess }) {
       <Flex vertical gap="middle" align="flex-start">
         {/* Responsive */}
 
-        <CiEdit className="text-[16px]" onClick={() => setOpen(true)} />
+        <CiEdit className="text-[16px]" onClick={handleClick} />
 
         <Modal
           title="Chỉnh sửa danh mục"

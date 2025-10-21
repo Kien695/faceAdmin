@@ -8,6 +8,14 @@ export default function EditRole({ role, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const context = useContext(MyContext);
+  const handleClick = () => {
+    if (!context?.userData?.role?.permissions.includes("role_edit")) {
+      context.openAlertBox("error", "Bạn không có quyền chỉnh sửa quyền!");
+      return;
+    } else {
+      setOpen(true);
+    }
+  };
   const inputRefs = {
     title: useRef(),
   };
@@ -37,10 +45,7 @@ export default function EditRole({ role, onSuccess }) {
   };
   return (
     <Flex align="center" justify="end" gap="middle">
-      <CiEdit
-        className="text-[18px] cursor-pointer"
-        onClick={() => setOpen(true)}
-      />
+      <CiEdit className="text-[18px] cursor-pointer" onClick={handleClick} />
       <Modal
         title="Thêm nhóm quyền"
         centered

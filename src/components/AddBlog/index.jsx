@@ -8,6 +8,14 @@ export default function AddBlog({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const context = useContext(MyContext);
+  const handleClick = () => {
+    if (!context?.userData?.role?.permissions.includes("blog_create")) {
+      context.openAlertBox("error", "Bạn không có quyền thêm blog!");
+      return;
+    } else {
+      setOpen(true);
+    }
+  };
   const uploadButton = (
     <div className="flex flex-col items-center justify-center border border-dashed hover:border-red-500 border-gray-300 rounded-md p-4 cursor-pointer text-gray-500">
       <PlusOutlined className="text-xl" />
@@ -62,7 +70,7 @@ export default function AddBlog({ onSuccess }) {
   return (
     <Flex vertical gap="middle" align="flex-start">
       {/* Responsive */}
-      <Button color="danger" variant="solid" onClick={() => setOpen(true)}>
+      <Button color="danger" variant="solid" onClick={handleClick}>
         Thêm Blogs
       </Button>
       <Modal

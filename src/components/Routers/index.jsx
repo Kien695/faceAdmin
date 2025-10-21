@@ -18,6 +18,8 @@ import Role from "../../Pages/Role";
 import Permission from "../../Pages/Permission";
 import PrivateRouters from "../PrivateRouter";
 import MyAccount from "../../Pages/MyAccount";
+import UserAdmin from "../../Pages/UserAdmin";
+import Trash from "../../Pages/Trash";
 export const routers = [
   {
     path: "/",
@@ -52,6 +54,10 @@ export const routers = [
         element: <User />,
       },
       {
+        path: "/userAdmin",
+        element: <UserAdmin />,
+      },
+      {
         path: "/orders",
         element: <Order />,
       },
@@ -74,6 +80,10 @@ export const routers = [
       {
         path: "/logo",
         element: <LogoShop />,
+      },
+      {
+        path: "/trash",
+        element: <Trash />,
       },
       {
         path: "/roles",

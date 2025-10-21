@@ -13,6 +13,14 @@ export default function EditProduct({ product, onSuccess }) {
   const [fileList, setFileList] = useState([]);
 
   const context = useContext(MyContext);
+  const handleClick = () => {
+    if (!context?.userData?.role?.permissions.includes("product_edit")) {
+      context.openAlertBox("error", "Bạn không có quyền chỉnh sửa sản phẩm!");
+      return;
+    } else {
+      setOpen(true);
+    }
+  };
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -70,9 +78,9 @@ export default function EditProduct({ product, onSuccess }) {
   });
   // Khi có formData.images -> convert thành fileList cho Upload hiển thị
   useEffect(() => {
-    if (formData.images && formData.images.length > 0) {
+    if (product?.images && product.images.length > 0) {
       setFileList(
-        formData.images.map((img, i) => ({
+        product.images.map((img, i) => ({
           uid: img.public_id || `-${i}`,
           name: `image-${i}`,
           status: "done",
@@ -81,10 +89,11 @@ export default function EditProduct({ product, onSuccess }) {
         }))
       );
     }
-  }, [formData.images]);
+  }, [product]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -100,48 +109,34 @@ export default function EditProduct({ product, onSuccess }) {
 
       // append các trường khác
       Object.keys(formData).forEach((key) => {
-        if (key !== "images") {
-          data.append(key, formData[key]);
+        if (key === "images") return;
+
+        const value = formData[key];
+
+        if (key === "price") {
+          data.append("price", Number(value) * 1000);
+        } else if (Array.isArray(value)) {
+          value.forEach((item) => data.append(`${key}[]`, item));
+        } else {
+          data.append(key, value); // append bình thường cho string/number
         }
       });
 
-      // Gom ảnh cũ
-      const oldImages = fileList
-        .filter((file) => !file.originFileObj) // ảnh cũ
-        .map((file) => ({
-          url: file.url,
-          public_id: file.public_id,
-        }));
+      // Ảnh mới (File thực) — để Cloudinary upload
+      formData.images.forEach((img) => {
+        if (img instanceof File) {
+          data.append("images", img);
+        }
+      });
+
+      // Ảnh cũ (chỉ lưu lại URL và public_id)
+      const oldImages = formData.images.filter((img) => !(img instanceof File));
       data.append("oldImages", JSON.stringify(oldImages));
-
-      // Ảnh mới
-      fileList
-        .filter((file) => file.originFileObj)
-        .forEach((file) => data.append("images", file.originFileObj));
-
       // Gọi BE
       const res = await patchData(`/api/product/update/${product._id}`, data);
 
       if (res.success) {
         context.openAlertBox("success", res.message);
-
-        // 🚀 Cập nhật lại formData + fileList từ ảnh Cloudinary trả về
-        if (res.data?.images) {
-          setFormData((prev) => ({
-            ...prev,
-            images: res.data.images,
-          }));
-
-          setFileList(
-            res.data.images.map((img, i) => ({
-              uid: img.public_id || `-${i}`,
-              name: `image-${i}`,
-              status: "done",
-              url: img.url,
-              public_id: img.public_id,
-            }))
-          );
-        }
 
         if (onSuccess) onSuccess();
         setOpen(false);
@@ -161,8 +156,8 @@ export default function EditProduct({ product, onSuccess }) {
   return (
     <>
       <AiFillEdit
-        className="text-[16px] cursor-pointer"
-        onClick={() => setOpen(true)}
+        className="text-[18px] cursor-pointer"
+        onClick={handleClick}
       />
       <Modal
         title="Chỉnh sửa sản phẩm"
@@ -316,22 +311,34 @@ export default function EditProduct({ product, onSuccess }) {
                 beforeUpload={() => false} // không upload tự động
                 onPreview={handlePreview}
                 onChange={({ fileList: newFileList }) => {
-                  setFileList(newFileList); // để Upload render preview
+                  setFileList(newFileList);
+
+                  // Giữ cả ảnh cũ và mới
+                  const updatedImages = newFileList
+                    .map((file) => {
+                      if (file.originFileObj) {
+                        // Ảnh mới được chọn
+                        return file.originFileObj;
+                      } else if (file.url && file.public_id) {
+                        // Ảnh cũ từ server
+                        return {
+                          url: file.url,
+                          public_id: file.public_id,
+                        };
+                      }
+                      return null;
+                    })
+                    .filter(Boolean);
+
                   setFormData((prev) => ({
                     ...prev,
-                    images: newFileList.map((file) => ({
-                      url:
-                        file.url || // ảnh cũ có url từ server
-                        (file.originFileObj
-                          ? URL.createObjectURL(file.originFileObj) // ảnh mới chọn
-                          : file.thumbUrl || null), // fallback preview của antd
-                      public_id: file.public_id || null,
-                    })),
+                    images: updatedImages,
                   }));
                 }}
               >
                 {fileList.length >= 5 ? null : uploadButton}
               </Upload>
+
               {previewImage && (
                 <Image
                   wrapperStyle={{ display: "none" }}
@@ -353,7 +360,7 @@ export default function EditProduct({ product, onSuccess }) {
                     <Spin /> Đang xử lí
                   </div>
                 ) : (
-                  "Thêm mới"
+                  "Cập nhật"
                 )}
               </Button>
             </div>

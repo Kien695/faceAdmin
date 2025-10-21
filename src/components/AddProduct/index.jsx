@@ -4,6 +4,8 @@ import { PlusOutlined } from "@ant-design/icons";
 import React, { useContext, useState } from "react";
 import { MyContext } from "../../App";
 import { postData } from "../../untils/api";
+import { CgProductHunt } from "react-icons/cg";
+import { FaPlus } from "react-icons/fa6";
 
 export default function AddProduct({ onSuccess }) {
   const [open, setOpen] = useState(false);
@@ -13,6 +15,14 @@ export default function AddProduct({ onSuccess }) {
   const [fileList, setFileList] = useState([]);
 
   const context = useContext(MyContext);
+  const handleClick = () => {
+    if (!context?.userData?.role?.permissions.includes("product_create")) {
+      context.openAlertBox("error", "Bạn không có quyền thêm danh mục!");
+      return;
+    } else {
+      setOpen(true);
+    }
+  };
   //hình
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -76,7 +86,7 @@ export default function AddProduct({ onSuccess }) {
       [name]: value,
     }));
   };
-
+  console.log(formData);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -84,8 +94,16 @@ export default function AddProduct({ onSuccess }) {
 
     // append các trường khác
     Object.keys(formData).forEach((key) => {
-      if (key !== "images") {
-        data.append(key, formData[key]);
+      if (key === "images") return;
+
+      const value = formData[key];
+
+      if (key === "price") {
+        data.append("price", Number(value) * 1000);
+      } else if (Array.isArray(value)) {
+        value.forEach((item) => data.append(`${key}[]`, item));
+      } else {
+        data.append(key, value); // append bình thường cho string/number
       }
     });
 
@@ -131,8 +149,13 @@ export default function AddProduct({ onSuccess }) {
   };
   return (
     <>
-      <Button color="danger" variant="solid" onClick={() => setOpen(true)}>
-        Thêm sản phẩm
+      <Button color="danger" variant="solid" onClick={handleClick}>
+        <span className="hidden sm:inline">Thêm sản phẩm</span>
+        {/* Hiện dấu + khi màn hình < sm */}
+        <span className="inline sm:hidden text-[20px] flex gap-1 items-center justify-center">
+          <FaPlus />
+          <CgProductHunt />
+        </span>
       </Button>
       <Modal
         title="Thêm sản phẩm"
@@ -168,8 +191,6 @@ export default function AddProduct({ onSuccess }) {
                     setFormData((prev) => ({
                       ...prev,
                       category: value,
-                      // catId: value,
-                      // catName: option.label,
                     }));
                   }}
                 />
@@ -236,13 +257,12 @@ export default function AddProduct({ onSuccess }) {
                   mode="multiple"
                   allowClear
                   size="large"
-                  defaultValue={["S"]}
                   style={{ width: 250 }}
                   options={[
-                    { value: "m", label: "M" },
-                    { value: "s", label: "S" },
-                    { value: "l", label: "L" },
-                    { value: "xl", label: "XL" },
+                    { value: "M", label: "M" },
+                    { value: "S", label: "S" },
+                    { value: "L", label: "L" },
+                    { value: "XL", label: "XL" },
                   ]}
                   onChange={(values) => {
                     setFormData((prev) => ({

@@ -28,6 +28,7 @@ export default function Category() {
       if (res.success) {
         setData(res.data);
         context.setCatData(res.data);
+        console.log("Dữ liệu category nhận từ API:", res.data);
       }
     } catch (error) {
       if (error.response) {
@@ -51,7 +52,6 @@ export default function Category() {
       <Space size="middle">
         <EditCategory
           category={item} // truyền toàn bộ object category
-         
           onSuccess={() => {
             fetchData();
           }}
@@ -61,49 +61,13 @@ export default function Category() {
     ),
   }));
 
-  const start = () => {
-    setLoading(true);
-    // ajax request after empty completing
-    setTimeout(() => {
-      setSelectedRowKeys([]);
-      setLoading(false);
-    }, 1000);
-  };
-  const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  const hasSelected = selectedRowKeys.length > 0;
-
   return (
     <div className="bg-white p-2 rounded-md shadow-md">
-      <div className="px-2 pb-6 text-[18px] font-[600] text-[#ff5252]">
+      <div className="px-2 pb-6 text-[18px] font-[600] text-[#ff5252] uppercase">
         Danh mục sản phẩm
       </div>
       <Flex gap="middle" vertical>
-        <Flex
-          align="center"
-          justify="space-between"
-          gap="middle"
-          className="px-5"
-        >
-          <div className="flex items-center gap-2">
-            <Button
-              type="primary"
-              onClick={start}
-              disabled={!hasSelected}
-              loading={loading}
-            >
-              Xóa tất cả
-            </Button>
-
-            {hasSelected ? `Chọn ${selectedRowKeys.length} danh mục` : null}
-          </div>
-
+        <Flex align="center" justify="end" gap="middle" className="px-5">
           <AddCategory
             onSuccess={(newCategory) => {
               setData((prev) => [...prev, newCategory]); //thêm trực tiếp vào danh sách
@@ -111,10 +75,12 @@ export default function Category() {
           />
         </Flex>
         <Table
-          rowSelection={rowSelection}
           columns={columns}
           dataSource={dataSource}
           loading={loading}
+          scroll={{
+            x: "max-content", // cho phép scroll ngang khi bảng rộng hơn màn hình
+          }}
         />
       </Flex>
     </div>

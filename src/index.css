@@ -18,3 +18,38 @@ body {
 .ant-spin-dot-holder {
   color: #ff5252 !important;
 }
+.swiper-pagination-bullet-active {
+  background-color: white !important;
+}
+.swiper-button-prev {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  background: #ff5252;
+}
+.swiper-button-prev:after {
+  font-size: 15px !important;
+  color: white;
+}
+.swiper-button-next {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  background: #ff5252;
+}
+.swiper-button-next:after {
+  font-size: 15px !important;
+  color: white;
+}
+.swiper-button-prev:hover {
+  background: #d19494;
+}
+.swiper-button-next:hover {
+  background: #d19494;
+}
+.swiper-button-next:hover::after {
+  color: #fff;
+}
+.swiper-button-prev:hover::after {
+  color: #fff;
+}

@@ -54,6 +54,7 @@ export const putData = async (url, formData, config = {}) => {
 // DELETE
 export const deleteData = async (url, token) => {
   try {
+    console.log(apiUrl + url);
     const response = await axios.delete(apiUrl + url, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,

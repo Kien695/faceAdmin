@@ -1,12 +1,13 @@
-import React, { useContext } from "react";
+import React from "react";
+import { useContext } from "react";
+import { RiDeleteBinLine } from "react-icons/ri";
 import { MyContext } from "../../App";
 import Swal from "sweetalert2";
 import { deleteData } from "../../untils/api";
-import { RiDeleteBinLine } from "react-icons/ri";
-export default function DeleteRole({ role, onSuccess }) {
+export default function DeleteUserAdmin({ admin, onSuccess }) {
   const context = useContext(MyContext);
   const handleDelete = async () => {
-    if (!context?.userData?.role?.permissions.includes("role_delete")) {
+    if (!context?.userData?.role?.permissions.includes("userAdmin_delete")) {
       context.openAlertBox("error", "Bạn không có quyền xóa!");
       return;
     }
@@ -22,7 +23,9 @@ export default function DeleteRole({ role, onSuccess }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await deleteData(`/api/role/deleted/${role._id}`);
+          const res = await deleteData(
+            `/api/userAdmin/deleteAccount/${admin._id}`
+          );
           if (res.success) {
             context.openAlertBox("success", res.message);
             if (onSuccess) onSuccess();

@@ -8,6 +8,14 @@ export default function AddRole({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const context = useContext(MyContext);
+  const handleClick = () => {
+    if (!context?.userData?.role?.permissions.includes("role_create")) {
+      context.openAlertBox("error", "Bạn không có quyền thêm nhóm quyền!");
+      return;
+    } else {
+      setOpen(true);
+    }
+  };
   const inputRefs = {
     title: useRef(),
   };
@@ -51,7 +59,7 @@ export default function AddRole({ onSuccess }) {
   };
   return (
     <Flex align="center" justify="end" gap="middle" className="px-5">
-      <Button color="danger" variant="solid" onClick={() => setOpen(true)}>
+      <Button color="danger" variant="solid" onClick={handleClick}>
         Thêm nhóm quyền
       </Button>
       <Modal

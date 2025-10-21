@@ -22,6 +22,14 @@ export default function AddCategory({ onSuccess }) {
     parentCatName: "",
     parentId: "",
   });
+  const handleClick = () => {
+    if (!context?.userData?.role?.permissions.includes("category_create")) {
+      context.openAlertBox("error", "Bạn không có quyền thêm danh mục!");
+      return;
+    } else {
+      setOpen(true);
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -64,7 +72,7 @@ export default function AddCategory({ onSuccess }) {
     <>
       <Flex vertical gap="middle" align="flex-start">
         {/* Responsive */}
-        <Button color="danger" variant="solid" onClick={() => setOpen(true)}>
+        <Button color="danger" variant="solid" onClick={handleClick}>
           Thêm danh mục
         </Button>
         <Modal

@@ -15,7 +15,7 @@ export default function Order() {
   return (
     <div className=" shadow-[0_0_10px_2px_rgba(0,0,0,0.1)] rounded-md">
       <div className="flex items-center justify-between rounded-md  w-full p-5 bg-white">
-        <div className=" text-[18px] font-[500] text-[#ff5252] ">
+        <div className=" text-[18px] font-[500] text-[#ff5252] uppercase">
           Danh sách đơn hàng
         </div>
         <Input

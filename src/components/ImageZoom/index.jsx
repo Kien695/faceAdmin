@@ -25,16 +25,19 @@ export default function ZoomImage({ images = [] }) {
         slidesPerView={1}
         spaceBetween={0}
         navigation={false}
+        className="rounded-md"
       >
         {images.map((img, index) => (
           <SwiperSlide key={index}>
-            <InnerImageZoom
-              src={img.url}
-              zoomType="hover"
-              zoomPreload={true}
-              hideHint={true}
-              className="transition-transform duration-300 hover:scale-110 rounded-md"
-            />
+            <div className="w-full h-[350px] flex items-center justify-center bg-gray-50 rounded-md overflow-hidden relative">
+              <InnerImageZoom
+                src={img.url}
+                zoomType="hover"
+                zoomPreload={true}
+                hideHint={true}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+              />
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>
@@ -51,12 +54,16 @@ export default function ZoomImage({ images = [] }) {
           {images.map((img, index) => (
             <SwiperSlide key={index}>
               <div
-                className={`rounded-md overflow-hidden cursor-pointer ${
+                className={`w-[80px] h-[80px] rounded-md overflow-hidden cursor-pointer ${
                   slideIndex === index ? "opacity-100" : "opacity-50"
                 }`}
                 onClick={() => goto(index)}
               >
-                <img src={img.url} alt={`thumbnail-${index}`} />
+                <img
+                  src={img.url}
+                  alt={`thumbnail-${index}`}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </SwiperSlide>
           ))}

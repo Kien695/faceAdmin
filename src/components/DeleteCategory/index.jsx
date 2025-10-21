@@ -8,6 +8,10 @@ import { MyContext } from "../../App";
 export default function DeleteCategory({ category, onSuccess }) {
   const context = useContext(MyContext);
   const handleDelete = async () => {
+    if (!context?.userData?.role?.permissions.includes("category_delete")) {
+      context.openAlertBox("error", "Bạn không có quyền xóa!");
+      return;
+    }
     Swal.fire({
       title: "Bạn chắc muốn xóa nó?",
       text: "Bạn sẽ không khôi phục lại được!",

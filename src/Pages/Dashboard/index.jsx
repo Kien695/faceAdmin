@@ -119,16 +119,16 @@ export default function Dashboard() {
   return (
     <>
       <div className="flex items-center border border-1 border-gray-200 p-6 rounded-lg shadow-md bg-[#f1faff]">
-        <div className="w-[80%] flex flex-col gap-4 pl-8">
-          <div className="font-bold text-[30px] leading-tight">
+        <div className="w-[80%] flex flex-col gap-4 pl-8  ">
+          <div className="font-bold text-[25px] sm:text-[30px] leading-tight max-md:flex max-md:justify-center">
             Xin chào, <br />
             <span className="text-[#ff5252]">Tấn Kiên</span>
           </div>
 
-          <div className="text-[18px]">
+          <div className="sm:text-[18px] text-[15px]">
             Dưới đấy là số thiệu thống kê của của cửa hàng bạn
           </div>
-          <div className="w-1/5 mt-2 flex items-center justify-center">
+          <div className="mt-2 flex  justify-center md:justify-start">
             <AddProduct />
           </div>
         </div>
@@ -143,62 +143,80 @@ export default function Dashboard() {
         pagination={{
           clickable: true,
         }}
+        breakpoints={{
+          0: {
+            // màn hình rất nhỏ (<400px)
+            slidesPerView: 1,
+          },
+          570: {
+            // màn hình nhỏ hơn tablet
+            slidesPerView: 2,
+          },
+          850: {
+            // màn hình nhỏ hơn tablet
+            slidesPerView: 3,
+          },
+          1024: {
+            // màn hình lớn (desktop)
+            slidesPerView: 4,
+          },
+        }}
         modules={[FreeMode, Pagination]}
         className="mySwiper mt-5"
       >
         <SwiperSlide>
-          <Link>
-            <div className="flex gap-2 shadow-lg hover:bg-[#289974] items-center justify-between bg-green-600 rounded-md text-[white] px-2 py-8">
-              <div className="flex items-center gap-3">
-                <FaUsers className="text-[30px]" />
-                <div className="flex flex-col  gap-1 text-[18px] ">
+          <Link to="/users">
+            <div className="flex gap-2 shadow-lg hover:bg-[#289974] items-center justify-between bg-green-600 rounded-md text-[white] px-7 sm:px-6 md:px-2  py-8">
+              <div className="flex items-center gap-4 md:gap-3">
+                <FaUsers className="text-[35px] md:text-[30px]" />
+                <div className="flex flex-col  gap-1 text-[24px] md:text-[20px]">
                   <div>Tổng người dùng</div>
                   <span className="font-bold">{data?.user?.total}</span>
                 </div>
               </div>
-              <IoStatsChart className="text-[30px] " />
+              <IoStatsChart className="text-[35px] md:text-[30px]" />
             </div>
           </Link>
         </SwiperSlide>
         <SwiperSlide>
-          <Link>
-            <div className="flex gap-2 shadow-lg items-center justify-between bg-red-600 hover:bg-[#ff1522] rounded-md text-[white] px-2 py-8">
-              <div className="flex items-center gap-3">
-                <TiShoppingCart className="text-[30px]" />
-                <div className="flex flex-col  gap-1 text-[18px] ">
+          <Link to="/orders">
+            <div className="flex gap-2 shadow-lg items-center justify-between bg-red-600 hover:bg-[#ff1522] rounded-md text-[white] px-7 sm:px-6 md:px-2 py-8">
+              <div className="flex items-center gap-4 md:gap-3">
+                <TiShoppingCart className="text-[35px] md:text-[30px]" />
+                <div className="flex flex-col  gap-1 text-[24px] md:text-[20px]">
                   <div>Tổng đơn hàng</div>
                   <span className="font-bold">{data?.order?.total}</span>
                 </div>
               </div>
-              <IoStatsChart className="text-[30px] " />
+              <IoStatsChart className="text-[35px] md:text-[30px]" />
             </div>
           </Link>
         </SwiperSlide>
         <SwiperSlide>
-          <Link>
-            <div className="flex gap-2 shadow-lg items-center justify-between bg-blue-600 hover:bg-[#2f7cee] rounded-md text-[white] px-2 py-8">
-              <div className="flex items-center gap-3">
-                <FaProductHunt className="text-[30px]" />
-                <div className="flex flex-col  gap-1 text-[18px] ">
+          <Link to="/products">
+            <div className="flex gap-2 shadow-lg items-center justify-between bg-blue-600 hover:bg-[#2f7cee] rounded-md text-[white] px-7 sm:px-6 md:px-2 py-8">
+              <div className="flex items-center gap-4 md:gap-3">
+                <FaProductHunt className="text-[35px] md:text-[30px]" />
+                <div className="flex flex-col  gap-1 text-[24px] md:text-[20px]">
                   <div>Tổng sản phẩm</div>
                   <span className="font-bold">{data?.products?.total}</span>
                 </div>
               </div>
-              <IoStatsChart className="text-[30px] " />
+              <IoStatsChart className="text-[35px] md:text-[30px]" />
             </div>
           </Link>
         </SwiperSlide>
         <SwiperSlide>
-          <Link>
-            <div className="flex gap-2 shadow-lg items-center justify-between bg-purple-600  hover:bg-purple-500 rounded-md text-[white] px-2 py-8">
-              <div className="flex items-center gap-3">
-                <BiCategory className="text-[30px]" />
-                <div className="flex flex-col  gap-1 text-[18px] ">
+          <Link to="/categories">
+            <div className="flex gap-2 shadow-lg items-center justify-between bg-purple-600  hover:bg-purple-500 rounded-md text-[white] px-7 sm:px-6 md:px-2 py-8">
+              <div className="flex items-center gap-4 md:gap-3">
+                <BiCategory className="text-[35px] md:text-[30px]" />
+                <div className="flex flex-col  gap-1 text-[24px] md:text-[20px]">
                   <div>Tổng danh mục</div>
                   <span className="font-bold">{data?.category?.total}</span>
                 </div>
               </div>
-              <IoStatsChart className="text-[30px] " />
+              <IoStatsChart className="text-[35px] md:text-[30px]" />
             </div>
           </Link>
         </SwiperSlide>

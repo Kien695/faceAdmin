@@ -60,12 +60,19 @@ export default function Role() {
   }));
   return (
     <div className="bg-white p-2 rounded-md shadow-md">
-      <div className="px-2 pb-6 text-[18px] font-[600] text-[#ff5252]">
+      <div className="px-2 pb-6 text-[18px] font-[600] text-[#ff5252] uppercase">
         Danh sách nhóm quyền
       </div>
       <Flex gap="middle" vertical>
         <AddRole onSuccess={() => fetChData()} />
-        <Table columns={columns} dataSource={data} />;
+        <Table
+          columns={columns}
+          dataSource={data}
+          scroll={{
+            x: "max-content", // cho phép scroll ngang khi bảng rộng hơn màn hình
+          }}
+        />
+        ;
       </Flex>
     </div>
   );

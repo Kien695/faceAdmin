@@ -212,7 +212,7 @@ export default function SubCategory() {
 
   return (
     <div className="bg-white p-2 rounded-md shadow-md">
-      <div className="px-2 py-4 text-[20px] font-[600] text-[#ff5252]">
+      <div className="px-2 py-4 text-[20px] font-[600] text-[#ff5252] uppercase">
         Danh mục phụ sản phẩm
       </div>
       <Flex gap="middle" vertical>
