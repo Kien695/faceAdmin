@@ -30,7 +30,6 @@ export default function DeleteBlog({ blog, onSuccess }) {
           }
         } catch (error) {
           if (error.response?.data?.message) {
-            // có response từ server
             context.openAlertBox("error", error.response.data.message);
           } else {
             context.openAlertBox("error", "Không thể kết nối server!");
