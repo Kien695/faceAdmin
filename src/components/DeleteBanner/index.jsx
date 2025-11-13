@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MyContext } from "../../App";
 import { deleteData } from "../../untils/api";
-export default function DeleteBannerHome({ banner, onSuccess }) {
+export default function DeleteBanner({ banner, type, onSuccess }) {
   const context = useContext(MyContext);
   const handleDelete = () => {
     Swal.fire({
@@ -19,7 +19,7 @@ export default function DeleteBannerHome({ banner, onSuccess }) {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await deleteData(`/api/banner/delete/${banner}`);
+          const res = await deleteData(`/api/${type}/delete/${banner}`);
           if (res.success) {
             context.openAlertBox("success", res.message);
             if (onSuccess) onSuccess();

@@ -86,7 +86,7 @@ export default function AddProduct({ onSuccess }) {
       [name]: value,
     }));
   };
-  console.log(formData);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

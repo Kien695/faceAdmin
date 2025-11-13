@@ -1,11 +1,12 @@
 import { Button, Flex, Modal, Spin, Upload } from "antd";
 import React from "react";
-import { useState } from "react";
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { useContext } from "react";
+import { CiEdit } from "react-icons/ci";
 import { MyContext } from "../../App";
-import { postData } from "../../untils/api";
-export default function AddBannerHome({ onSuccess }) {
+import { PlusOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { putData } from "../../untils/api";
+export default function EditBanner({ banner, type, onSuccess }) {
   const context = useContext(MyContext);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -16,24 +17,22 @@ export default function AddBannerHome({ onSuccess }) {
     </div>
   );
   const [formData, setFormData] = useState({
-    images: "",
+    images: banner.images || "",
   });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if (!formData.images) {
-      context.openAlertBox("error", "Vui lòng thêm hình ảnh");
-      setLoading(false);
-      return;
-    }
-    const body = new FormData();
-    body.append("images", formData.images);
+
     try {
-      const res = await postData("/api/banner/create", body);
+      const body = new FormData();
+
+      body.append("images", formData.images);
+
+      const res = await putData(`/api/${type}/edit/${banner._id}`, body);
+
       if (res.success) {
-        setFormData({ images: "" });
         context.openAlertBox("success", res.message);
+
         setOpen(false);
         if (onSuccess) {
           onSuccess();
@@ -46,18 +45,20 @@ export default function AddBannerHome({ onSuccess }) {
         context.openAlertBox("error", "Không thể kết nối server!");
       }
     } finally {
-      setLoading(false); // luôn chạy
+      setLoading(false);
     }
   };
-
   return (
     <Flex vertical gap="middle" align="flex-start">
       {/* Responsive */}
-      <Button color="danger" variant="solid" onClick={() => setOpen(true)}>
-        Thêm Banner
-      </Button>
+
+      <CiEdit
+        className="text-[20px] cursor-pointer"
+        onClick={() => setOpen(true)}
+      />
+
       <Modal
-        title="Thêm Banner Home"
+        title="Chỉnh sửa Banner Home"
         centered
         open={open}
         footer={null}
@@ -85,7 +86,10 @@ export default function AddBannerHome({ onSuccess }) {
                           uid: "-1",
                           name: "image.png",
                           status: "done",
-                          url: URL.createObjectURL(formData.images),
+                          url:
+                            typeof formData.images === "string"
+                              ? formData.images // ảnh cũ từ server
+                              : URL.createObjectURL(formData.images), // ảnh mới upload
                         },
                       ]
                     : []
@@ -109,7 +113,7 @@ export default function AddBannerHome({ onSuccess }) {
                     <Spin /> Đang xử lí...
                   </div>
                 ) : (
-                  "Thêm mới"
+                  "Cập nhật"
                 )}
               </Button>
             </div>

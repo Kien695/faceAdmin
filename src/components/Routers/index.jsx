@@ -10,8 +10,8 @@ import Login from "../../Pages/Login";
 import Register from "../../Pages/Register";
 import VerifyEmail from "../../Pages/VerifyEmail";
 import BannerHome from "../../Pages/BannerHome";
-import BannerListOne from "../../Pages/BannerListOne";
-import BannerListTwo from "../../Pages/BannerListTwo";
+import BannerListOne from "../../Pages/BannerList";
+
 import Blog from "../../Pages/Blogs";
 import LogoShop from "../../Pages/LogoShop";
 import Role from "../../Pages/Role";
@@ -66,13 +66,10 @@ export const routers = [
         element: <BannerHome />,
       },
       {
-        path: "/bannerListOne",
+        path: "/bannerList",
         element: <BannerListOne />,
       },
-      {
-        path: "/bannerListTwo",
-        element: <BannerListTwo />,
-      },
+
       {
         path: "/blogs",
         element: <Blog />,

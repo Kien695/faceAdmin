@@ -29,7 +29,7 @@ export default function BannerHome() {
   const hasSelected = selectedRowKeys.length > 0;
   const fetchData = async () => {
     try {
-      const res = await getData("/api/banner");
+      const res = await getData("/api/bannerList");
       if (res.success) {
         getBannerData(res.data);
       }
@@ -64,7 +64,7 @@ export default function BannerHome() {
         setLoading(true);
 
         try {
-          const res = await postData("/api/banner/delete-all", {
+          const res = await postData("/api/bannerList/delete-all", {
             ids: selectedRowKeys,
           });
           if (res.success) {
@@ -93,10 +93,14 @@ export default function BannerHome() {
     ),
     action: (
       <Space size="middle">
-        <EditBanner banner={item} type="banner" onSuccess={() => fetchData()} />
+        <EditBanner
+          banner={item}
+          type="bannerList"
+          onSuccess={() => fetchData()}
+        />
         <DeleteBanner
           banner={item._id}
-          type="banner"
+          type="bannerList"
           onSuccess={() => fetchData()}
         />
       </Space>
@@ -126,7 +130,7 @@ export default function BannerHome() {
             </Button>
             {hasSelected ? `Chọn ${selectedRowKeys.length} Banner` : null}
           </div>
-          <AddBanner type="banner" onSuccess={() => fetchData()} />
+          <AddBanner type="bannerList" onSuccess={() => fetchData()} />
         </Flex>
 
         <Table

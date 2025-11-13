@@ -133,8 +133,7 @@ const App = () => {
       icon: <PiSlideshowFill />,
       children: [
         { key: "/bannerHome", label: "Banner home" },
-        { key: "/bannerListOne", label: "Banner list 1" },
-        { key: "/bannerListTwo", label: "Banner list 2" },
+        { key: "/bannerList", label: "Banner list " },
       ],
     },
     context?.userData?.role?.permissions.includes("blog_view") && {
