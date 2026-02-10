@@ -125,7 +125,7 @@ export default function AddProduct({ onSuccess }) {
           brand: "",
           price: "",
           discountPercentage: "",
-          catName: "",
+          category: "",
           catId: "",
           countInStock: "",
           rating: "",
@@ -152,7 +152,7 @@ export default function AddProduct({ onSuccess }) {
       <Button color="danger" variant="solid" onClick={handleClick}>
         <span className="hidden sm:inline">Thêm sản phẩm</span>
         {/* Hiện dấu + khi màn hình < sm */}
-        <span className="inline sm:hidden text-[20px] flex gap-1 items-center justify-center">
+        <span className="sm:hidden text-[20px] flex gap-1 items-center justify-center">
           <FaPlus />
           <CgProductHunt />
         </span>
@@ -184,7 +184,7 @@ export default function AddProduct({ onSuccess }) {
                 <div className="text-[15px]">Danh mục</div>
                 <Select
                   size="large"
-                  value={formData.catName}
+                  value={formData.category}
                   style={{ width: 250 }}
                   options={options}
                   onChange={(value, option) => {
@@ -310,7 +310,7 @@ export default function AddProduct({ onSuccess }) {
                   }));
                 }}
               >
-                {formData.images.length >= 8 ? null : uploadButton}
+                {formData.images.length >= 5 ? null : uploadButton}
               </Upload>
               {previewImage && (
                 <Image

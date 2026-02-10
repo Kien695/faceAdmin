@@ -80,7 +80,7 @@ export default function Trash() {
           alt=""
           className="w-[55px] rounded-md"
         />
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 leading-none">
           <div className="leading-none text-[14px] font-[500] line-clamp-2">
             {item.name}
           </div>
@@ -94,7 +94,10 @@ export default function Trash() {
     dateDelete: item.deletedBy
       ? dayjs(item.deletedBy.deletedAt).format("YYYY-MM-DD")
       : "",
-    peopleDelete: item.deletedBy?.account_id?.name,
+    peopleDelete:
+      item.deletedBy?.account_id?._id == context.userData._id
+        ? "Bạn"
+        : item.deletedBy?.account_id?.name || "Không xác định",
     action: (
       <Space size="small">
         <RestoreProduct
@@ -147,7 +150,7 @@ export default function Trash() {
         } catch (error) {
           context.openAlertBox(
             "error",
-            error.response?.data?.message || "Không thể kết nối server!"
+            error.response?.data?.message || "Không thể kết nối server!",
           );
         } finally {
           setLoading(false);

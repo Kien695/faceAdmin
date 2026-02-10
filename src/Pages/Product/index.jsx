@@ -100,7 +100,7 @@ export default function Product() {
   const fetchData = async () => {
     try {
       const res = await getData(
-        `/api/product?page=${page}&keyword=${search}&category=${category}&rate=${rate}&sortKey=${sortKey}&sortValue=${sortValue}`
+        `/api/product?page=${page}&keyword=${search}&category=${category}&rate=${rate}&sortKey=${sortKey}&sortValue=${sortValue}`,
       );
 
       if (res.success) {
@@ -135,11 +135,13 @@ export default function Product() {
           alt=""
           className="w-[55px] rounded-md"
         />
-        <div className="flex flex-col gap-1">
-          <div className="leading-none text-[16px] font-[500] line-clamp-2">
+        <div className="leading-none flex flex-col gap-1">
+          <div className=" text-[16px] font-[500] line-clamp-2">
             {item.name}
           </div>
-          <span className="text-[#ff5252] text-[12px]">{item.brand}</span>
+          <span className="text-[#ff5252] text-[12px]">
+            {item.brand || "Chưa xác định"}
+          </span>
         </div>
       </div>
     ),
@@ -191,7 +193,7 @@ export default function Product() {
         } catch (error) {
           context.openAlertBox(
             "error",
-            error.response?.data?.message || "Không thể kết nối server!"
+            error.response?.data?.message || "Không thể kết nối server!",
           );
         } finally {
           setLoading(false);

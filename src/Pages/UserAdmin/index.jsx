@@ -67,7 +67,9 @@ export default function UserAdmin() {
         )}
 
         <div className="flex flex-col gap-1 leading-none">
-          <div className="font-[500] text-[15px]">{item.name}</div>
+          <div className="font-[500] text-[15px]">
+            {item._id === context?.userData._id ? "Bạn" : item.name}
+          </div>
           <div>{item.email}</div>
         </div>
       </div>

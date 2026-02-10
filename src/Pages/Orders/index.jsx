@@ -29,7 +29,7 @@ export default function Order() {
     } catch (error) {
       context.openAlertBox(
         "error",
-        error.response?.data?.message || "Không thể kết nối server!"
+        error.response?.data?.message || "Không thể kết nối server!",
       );
     }
   };
@@ -48,9 +48,8 @@ export default function Order() {
       if (res.success) {
         context.openAlertBox(
           "success",
-          res.message || "Cập nhật trạng thái thành công!"
+          res.message || "Cập nhật trạng thái thành công!",
         );
-        
       }
     } catch (error) {
       console.error("Lỗi khi cập nhật trạng thái:", error);
@@ -58,7 +57,6 @@ export default function Order() {
   };
   const handleDelete = async (orderId, productId, size, action) => {
     try {
-      console.log("ok");
       const res = await deleteData("/api/orderAdmin/deleteOrder", {
         orderId: orderId,
         productId: productId,
@@ -67,7 +65,7 @@ export default function Order() {
       });
       if (res.success) {
         context.openAlertBox("success", res.message);
-        fetchData()
+        fetchData();
       }
     } catch (error) {
       context.openAlertBox("error", "Lỗi!");
@@ -93,11 +91,13 @@ export default function Order() {
             <tr>
               <th className="px-3 py-3"></th>
               <th className="px-6 py-3">Mã đặt hàng</th>
-              <th className="px-6 py-3 whitespace-nowrap">Thanh toán</th>
+              <th className="px-6 py-3 whitespace-nowrap">
+                Trạng thái thanh toán
+              </th>
               <th className="px-6 py-3 whitespace-nowrap">Họ tên</th>
               <th className="px-6 py-3 whitespace-nowrap">Số điện thoại</th>
               <th className="px-6 py-3 w-20 whitespace-nowrap">Địa chỉ</th>
-              <th className="px-6 py-3 whitespace-nowrap">Thanh toán</th>
+              <th className="px-6 py-3 whitespace-nowrap">Tiền thanh toán</th>
               <th className="px-6 py-3">Email</th>
 
               <th className="px-6 py-3 whitespace-nowrap">Ngày đặt</th>
@@ -218,38 +218,42 @@ export default function Order() {
                                 </td>
                                 <td className="px-6 py-4">
                                   {Number(
-                                    item1.price * item1.quantity
+                                    item1.price * item1.quantity,
                                   ).toLocaleString("vi-VN") + " đ"}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                  <Select
-                                    defaultValue={item1?.order_status}
-                                    style={{ width: 170 }}
-                                    onChange={(value) =>
-                                      handleChangeStatus(
-                                        value,
-                                        item._id,
-                                        item1?.productId._id,
-                                        item1?.size
-                                      )
-                                    }
-                                    options={[
-                                      {
-                                        value: "pending",
-                                        label: "Đang chờ xử lí",
-                                      },
-                                      {
-                                        value: "delivering",
-                                        label: "Đang giao",
-                                      },
-                                      { value: "confirm", label: "Đã giao" },
-                                      {
-                                        value: "cancelled",
-                                        label: "Đơn hàng đã bị hủy",
-                                        disabled: true,
-                                      },
-                                    ]}
-                                  />
+                                  {item1?.order_status === "cancelled" ? (
+                                    <span className="text-red-500 font-medium">
+                                      Đơn hàng đã bị hủy
+                                    </span>
+                                  ) : (
+                                    <Select
+                                      defaultValue={item1?.order_status}
+                                      style={{ width: 170 }}
+                                      onChange={(value) =>
+                                        handleChangeStatus(
+                                          value,
+                                          item._id,
+                                          item1?.productId._id,
+                                          item1?.size,
+                                        )
+                                      }
+                                      options={[
+                                        {
+                                          value: "pending",
+                                          label: "Đang chờ xử lí",
+                                        },
+                                        {
+                                          value: "delivering",
+                                          label: "Đang giao",
+                                        },
+                                        {
+                                          value: "confirm",
+                                          label: "Đã giao",
+                                        },
+                                      ]}
+                                    />
+                                  )}
                                 </td>
                                 <td className="px-6 py-4">
                                   <Button
@@ -262,7 +266,7 @@ export default function Order() {
                                         item._id,
                                         item1?.productId._id,
                                         item1?.size,
-                                        item1?.order_status
+                                        item1?.order_status,
                                       )
                                     }
                                   >

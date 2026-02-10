@@ -53,11 +53,18 @@ export default function User() {
   const dataSource = user.map((item) => ({
     key: item._id,
     name: (
-      <div className="flex w-[200px] gap-3">
+      <div className="flex w-[220px] gap-3">
         <div className="w-[25%] rounded-md">
-          <img src={item.avatar} alt="user" className="rounded-md" />
+          <img
+            src={
+              item.avatar ||
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX3he9hIy9QSArPZ-zV-DRD7PZ1s-PcLtj3g&s"
+            }
+            alt="user"
+            className="rounded-md w-[35px] h-[35px] object-cover"
+          />
         </div>
-        <div className="flex flex-col gap-1 leading-none">
+        <div className="w-[75%] flex flex-col gap-1 leading-none">
           <div className="font-[500] text-[15px]">{item.name}</div>
           <div>{item.email}</div>
         </div>

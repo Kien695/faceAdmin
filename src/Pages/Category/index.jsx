@@ -28,7 +28,6 @@ export default function Category() {
       if (res.success) {
         setData(res.data);
         context.setCatData(res.data);
-        console.log("Dữ liệu category nhận từ API:", res.data);
       }
     } catch (error) {
       if (error.response) {

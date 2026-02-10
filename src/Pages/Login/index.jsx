@@ -49,16 +49,10 @@ export default function Login() {
     }
 
     try {
-      const res = await postData(
-        `/api/userAdmin/login`,
-        formFields,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await postData(`/api/userAdmin/login`, formFields);
       if (res.success) {
         localStorage.setItem("accessToken", res?.data?.accessToken);
-        localStorage.setItem("refreshToken", res?.data?.refreshToken);
+
         setFormFields({ email: "", password: "" });
         context.openAlertBox("success", res.message);
         context.setIsLogin(true);
@@ -78,7 +72,7 @@ export default function Login() {
   };
   return (
     <div className="p-5">
-      <div className="flex items-center justify-between">
+      <div className="flex md:flex-row flex-col md:gap-0 gap-4 items-center justify-between">
         <img src={logo} alt="" />
         <div className="flex gap-5">
           <NavLink to="/login">
@@ -103,23 +97,12 @@ export default function Login() {
       <div className="flex flex-col items-center gap-5 mt-6 ">
         <img src={icon} alt="" className="w-[50px]" />
         <div className="flex flex-col items-center leading-tight text-[30px] font-bold">
-          <div>Xin chào! </div>
-          <div> Hãy đăng nhập với thông tin của bạn</div>
-        </div>
-
-        <Button
-          size="large"
-          type="primary"
-          ghost
-          danger
-          className="w-[300px] text-[18px] !text-black font-[400] items-center flex"
-        >
-          Tiếp tục với google <FcGoogle className="!text-[25px]" />
-        </Button>
-        <div className="flex items-center w-[400px]">
-          <div className="flex-grow border-t border-gray-300"></div>
-          <span className="mx-2 text-gray-500 text-sm">HOẶC</span>
-          <div className="flex-grow border-t border-gray-300"></div>
+          <div className="text-center md:text-[27px] text-[22px]">
+            Xin chào!
+          </div>
+          <div className="text-center md:text-[25px] text-[20px]">
+            Hãy đăng nhập với thông tin của bạn
+          </div>
         </div>
 
         <form onSubmit={handleSubmit}>

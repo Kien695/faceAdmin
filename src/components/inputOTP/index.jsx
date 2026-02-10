@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 
-export default function OtpInputs({ length = 6, onComplete }) {
+export default function OtpInputs({ length, onComplete }) {
   const [values, setValues] = useState(Array(length).fill(""));
   const inputsRef = useRef([]);
 
@@ -61,7 +61,7 @@ export default function OtpInputs({ length = 6, onComplete }) {
   };
 
   const handlePaste = (e, idx) => {
-    e.preventDefault();
+    e.preventDefault(); // không cho copy hết vào 1 ô
     const text = (e.clipboardData || window.clipboardData).getData("text");
     const digits = text.replace(/\D/g, "");
     if (!digits) return;

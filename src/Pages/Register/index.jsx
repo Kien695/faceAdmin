@@ -44,8 +44,29 @@ export default function Register() {
       setLoading(false);
       return;
     }
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formInput.email)) {
+      context.openAlertBox("error", "Email không đúng định dạng!");
+      inputRefs.email.current.focus();
+      setLoading(false);
+      return;
+    }
     if (formInput.password == "") {
       context.openAlertBox("error", "Vui lòng nhập mật khẩu");
+      inputRefs.password.current.focus();
+      setLoading(false);
+      return;
+    }
+    // Regex password
+    const passwordRegex =
+      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[{\]};:'",.<>/?\\|]).{8,}$/;
+
+    if (!passwordRegex.test(formInput.password)) {
+      context.openAlertBox(
+        "error",
+        "Mật khẩu phải ≥ 8 ký tự, gồm 1 chữ hoa, 1 số và 1 ký tự đặc biệt",
+      );
       inputRefs.password.current.focus();
       setLoading(false);
       return;
@@ -66,7 +87,7 @@ export default function Register() {
   };
   return (
     <div className="p-5 mb-6">
-      <div className="flex items-center justify-between">
+      <div className="flex md:flex-row flex-col md:gap-0 gap-4 items-center justify-between">
         <img src={logo} alt="" />
         <div className="flex gap-5">
           <NavLink to="/login">
@@ -91,23 +112,13 @@ export default function Register() {
       <div className="flex flex-col items-center gap-5 mt-6 ">
         <img src={icon} alt="" className="w-[50px]" />
         <div className="flex flex-col items-center leading-tight text-[30px] font-bold">
-          <div>Xin chào! </div>
-          <div> Hãy tham gia cùng chúng tôi ngay hôm nay</div>
-        </div>
-
-        <Button
-          size="large"
-          type="primary"
-          ghost
-          danger
-          className="w-[300px] text-[18px] !text-black font-[400] items-center flex"
-        >
-          Tiếp tục với google <FcGoogle className="!text-[25px]" />
-        </Button>
-        <div className="flex items-center w-[400px]">
-          <div className="flex-grow border-t border-gray-300"></div>
-          <span className="mx-2 text-gray-500 text-sm">HOẶC</span>
-          <div className="flex-grow border-t border-gray-300"></div>
+          <div className="text-center md:text-[27px] text-[22px]">
+            Xin chào!{" "}
+          </div>
+          <div className="text-center md:text-[25px] text-[20px]">
+            {" "}
+            Hãy tham gia cùng chúng tôi ngay hôm nay
+          </div>
         </div>
 
         <form onSubmit={handleSubmit}>

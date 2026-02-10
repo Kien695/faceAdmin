@@ -1,86 +1,95 @@
 import axios from "axios";
-const apiUrl = import.meta.env.VITE_API_URL;
-//get
-export const getData = async (url, token) => {
-  try {
-    const response = await axios.get(apiUrl + url, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.log("Get error: ", error);
-    throw error;
-  }
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
+});
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
 };
-//post
-export const postData = async (url, formData, config = {}) => {
-  try {
-    const response = await axios.post(apiUrl + url, formData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-        ...(formData instanceof FormData
-          ? {}
-          : { "Content-Type": "application/json" }),
-      },
-      ...config,
-    });
-    return response.data;
-  } catch (error) {
-    console.log(error);
-    throw error;
+
+// REQUEST INTERCEPTOR
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-};
-// PUT
-export const putData = async (url, formData, config = {}) => {
-  try {
-    console.log(apiUrl + url);
-    const response = await axios.put(apiUrl + url, formData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-        ...(formData instanceof FormData
-          ? {}
-          : { "Content-Type": "application/json" }),
-      },
-      ...config,
-    });
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-// DELETE
-export const deleteData = async (url, data, token) => {
-  try {
-    const response = await axios.delete(apiUrl + url, {
-      data: data,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("DELETE error:", error);
-    throw error;
-  }
-};
-// PATCH
-export const patchData = async (url, formData, config = {}) => {
-  try {
-    const response = await axios.patch(apiUrl + url, formData, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
-        ...(formData instanceof FormData
-          ? {}
-          : { "Content-Type": "application/json" }),
-      },
-      ...config,
-    });
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
+  return config;
+});
+
+// RESPONSE INTERCEPTOR
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 401 &&
+      error.response?.data?.code === "ACCESS_TOKEN_EXPIRED"
+    ) {
+      if (originalRequest._retry) {
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        // ĐỨNG CHỜ
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(api(originalRequest));
+            },
+            reject,
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const res = await api.post("/api/user/refresh-token");
+        const newToken = res.data.data.accessToken;
+        localStorage.setItem("accessToken", newToken);
+        api.defaults.headers.Authorization = `Bearer ${newToken}`;
+
+        processQueue(null, newToken);
+
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        return api(originalRequest);
+      } catch (err) {
+        processQueue(err, null);
+        localStorage.removeItem("accessToken");
+        window.location.href = "/login";
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+export const getData = (url) => api.get(url).then((res) => res.data);
+export const postData = (url, data) =>
+  api.post(url, data).then((res) => res.data);
+export const putData = (url, data) =>
+  api.put(url, data).then((res) => res.data);
+export const patchData = (url, data) =>
+  api.patch(url, data).then((res) => res.data);
+export const deleteData = (url, data) =>
+  api.delete(url, { data }).then((res) => res.data);
+
+export default api;

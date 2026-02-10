@@ -31,7 +31,6 @@ export default function DetailProduct({ product }) {
       fetchData();
     }
   }, [product?._id]);
-  useEffect(() => {}, [formData]);
 
   return (
     <>

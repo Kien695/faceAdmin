@@ -46,6 +46,7 @@ export default function MyAccount() {
       [name]: value,
     }));
   };
+  //upload avatar
   const handleUpload = async (file) => {
     try {
       // tạo preview để show ngay
@@ -57,7 +58,7 @@ export default function MyAccount() {
 
       const response = await postData("/api/userAdmin/user-avatar", formData);
 
-      if (response && response._id) {
+      if (response.success) {
         // update thẳng context luôn, khỏi gọi lại API get user detail
         context.setUserData((prev) => ({
           ...prev,
@@ -90,7 +91,7 @@ export default function MyAccount() {
       // lấy quận/huyện cho tỉnh đã chọn
       axios
         .get(
-          `https://provinces.open-api.vn/api/v1/p/${selectedProvince}?depth=2`
+          `https://provinces.open-api.vn/api/v1/p/${selectedProvince}?depth=2`,
         )
         .then((res) => {
           setDistricts(res.data.districts || []);
@@ -105,7 +106,7 @@ export default function MyAccount() {
       // lấy phường/xã
       axios
         .get(
-          `https://provinces.open-api.vn/api/v1/d/${selectedDistrict}?depth=2`
+          `https://provinces.open-api.vn/api/v1/d/${selectedDistrict}?depth=2`,
         )
         .then((res) => {
           setWards(res.data.wards || []);
@@ -118,13 +119,7 @@ export default function MyAccount() {
     e.preventDefault();
 
     try {
-      const res = await putData(
-        `/api/userAdmin/${context?.userData?._id}`,
-        formInput,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await putData(`/api/userAdmin/updateInfo`, formInput);
       if (res.success) {
         context.openAlertBox("success", res.message);
       } else {
@@ -153,7 +148,11 @@ export default function MyAccount() {
           <div className="flex flex-col items-center gap-2 sm:w-[22%] border-b sm:border-b-0 sm:border-r border-gray-400 pb-4 sm:pb-0">
             <div className="relative w-[100px] h-[100px]">
               <img
-                src={preview || context?.userData?.avatar}
+                src={
+                  preview ||
+                  context?.userData?.avatar ||
+                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQf1fiSQO7JfDw0uv1Ae_Ye-Bo9nhGNg27dwg&s"
+                }
                 alt="avatar"
                 className="w-full h-full rounded-full object-cover"
               />
@@ -176,7 +175,7 @@ export default function MyAccount() {
               )}
             </div>
             <div className="text-[#ff5252] font-bold text-[16px]">
-              Admin chính
+              {context?.userData?.role?.title}
             </div>
           </div>
 

@@ -14,7 +14,7 @@ export default function EditUserAdmin({ admin, onSuccess }) {
     if (!context?.userData?.role?.permissions.includes("userAdmin_edit")) {
       context.openAlertBox(
         "error",
-        "Bạn không có quyền chỉnh sửa người quản lí!"
+        "Bạn không có quyền chỉnh sửa người quản lí!",
       );
       return;
     } else {
@@ -37,7 +37,7 @@ export default function EditUserAdmin({ admin, onSuccess }) {
     try {
       const res = await patchData(
         `/api/userAdmin/updateRole/${admin?._id}`,
-        formData
+        formData,
       );
 
       if (res.success) {
@@ -81,7 +81,7 @@ export default function EditUserAdmin({ admin, onSuccess }) {
         }}
       >
         <form onSubmit={handleSubmit}>
-          <div className="flex items-center gap-8">
+          <div className="flex md:flex-row flex-col  items-center md:gap-8 gap-4">
             <div className="flex flex-col gap-1">
               <div className="text-[15px]">Họ tên</div>
               <Input

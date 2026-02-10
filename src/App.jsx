@@ -15,9 +15,7 @@ export default function App() {
       if (token) {
         setIsLogin(true);
         try {
-          const resUser = await getData(
-            `/api/userAdmin/user-detail?token=${token}`
-          );
+          const resUser = await getData(`/api/userAdmin/user-detail`);
           if (resUser.success) {
             setUserData(resUser.data);
           }
