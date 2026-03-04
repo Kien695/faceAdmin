@@ -12,7 +12,7 @@ export default function Permission() {
         context.roleData.map((item) => ({
           id: item._id,
           permissions: item.permissions || [],
-        }))
+        })),
       );
     }
   }, [context?.roleData]);
@@ -29,7 +29,7 @@ export default function Permission() {
           };
         }
         return role;
-      })
+      }),
     );
   };
   const handleSubmit = async () => {
@@ -48,7 +48,10 @@ export default function Permission() {
   };
   return (
     <div className="relative overflow-x-auto ">
-      <div className="mb-4 text-end ">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="text-lg font-[500] uppercase text-[#ff5252]">
+          Phân quyền
+        </div>
         <Button type="primary" danger onClick={handleSubmit}>
           Cập nhật
         </Button>
@@ -539,6 +542,96 @@ export default function Permission() {
                     ?.permissions.includes("blog_delete")}
                   onChange={() =>
                     handlePermissionChange(item._id, "blog_delete")
+                  }
+                />
+              </td>
+            ))}
+          </tr>
+          {/* thông báo */}
+          {/* sản phẩm */}
+          <tr className="bg-gray-100 border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+            <td
+              className="px-6 py-2 font-medium text-red-600 whitespace-nowrap dark:text-white "
+              colSpan={parseInt(context?.roleData.length) + 1}
+            >
+              Thông báo
+            </td>
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+            <th
+              scope="row"
+              className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Xem
+            </th>
+            {context?.roleData.map((item) => (
+              <td className="px-6 py-2" key={item._id}>
+                <Checkbox
+                  checked={permissionData
+                    .find((p) => p.id === item._id)
+                    ?.permissions.includes("notification_view")}
+                  onChange={() =>
+                    handlePermissionChange(item._id, "notification_view")
+                  }
+                />
+              </td>
+            ))}
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+            <th
+              scope="row"
+              className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Thêm
+            </th>
+            {context?.roleData.map((item) => (
+              <td className="px-6 py-2" key={item._id}>
+                <Checkbox
+                  checked={permissionData
+                    .find((p) => p.id === item._id)
+                    ?.permissions.includes("notification_create")}
+                  onChange={() =>
+                    handlePermissionChange(item._id, "notification_create")
+                  }
+                />
+              </td>
+            ))}
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+            <th
+              scope="row"
+              className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Sửa
+            </th>
+            {context?.roleData.map((item) => (
+              <td className="px-6 py-2" key={item._id}>
+                <Checkbox
+                  checked={permissionData
+                    .find((p) => p.id === item._id)
+                    ?.permissions.includes("notification_edit")}
+                  onChange={() =>
+                    handlePermissionChange(item._id, "notification_edit")
+                  }
+                />
+              </td>
+            ))}
+          </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+            <th
+              scope="row"
+              className="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+            >
+              Xóa
+            </th>
+            {context?.roleData.map((item) => (
+              <td className="px-6 py-2" key={item._id}>
+                <Checkbox
+                  checked={permissionData
+                    .find((p) => p.id === item._id)
+                    ?.permissions.includes("notification_delete")}
+                  onChange={() =>
+                    handlePermissionChange(item._id, "notification_delete")
                   }
                 />
               </td>

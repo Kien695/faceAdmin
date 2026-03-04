@@ -274,10 +274,10 @@ export default function Dashboard() {
                         {item?.userId?.name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {item?.userId?.mobile}
+                        {item?.mobile}
                       </td>
                       <td className="px-6 py-4  whitespace-nowrap">
-                        {item.delivery_address}
+                        {item?.delivery_address}
                       </td>
                       <td className="px-6 py-4">
                         {Number(item.totalAmount).toLocaleString("vi-VN") +
@@ -401,7 +401,7 @@ export default function Dashboard() {
                                               label: "Đang giao",
                                             },
                                             {
-                                              value: "confirm",
+                                              value: "delivered",
                                               label: "Đã giao",
                                             },
                                           ]}

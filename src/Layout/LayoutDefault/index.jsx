@@ -74,7 +74,7 @@ const App = () => {
         {},
         {
           withCredentials: true,
-        }
+        },
       );
       if (res.success) {
         localStorage.removeItem("accessToken");
@@ -141,6 +141,11 @@ const App = () => {
       icon: <FaBlogger />,
       label: "Blogs",
     },
+    context?.userData?.role?.permissions.includes("blog_view") && {
+      key: "/notifications",
+      icon: <FaRegBell />,
+      label: "Thông báo",
+    },
     { key: "/logo", icon: <IoLogoBuffer />, label: "Logo cửa hàng" },
 
     { key: "/trash", icon: <FaTrashCanArrowUp />, label: "Thùng rác" },
@@ -198,7 +203,9 @@ const App = () => {
         <div className="flex flex-col items-center gap-6 pt-2">
           <img
             src={collapsed ? logo : brand}
-            className={collapsed ? "h-12 w-[60px]" : "h-12 w-[150px]"}
+            className={
+              collapsed ? "h-12 w-[60px] rounded-lg" : "h-12 w-[150px]"
+            }
           />
           <Menu
             defaultSelectedKeys={["1"]}

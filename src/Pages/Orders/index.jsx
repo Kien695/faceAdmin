@@ -125,7 +125,7 @@ export default function Order() {
                     {item?.userId?.name}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {item?.userId?.mobile}
+                    {item?.mobile}
                   </td>
                   <td className="px-6 py-4  whitespace-nowrap">
                     {item.delivery_address}
@@ -248,7 +248,7 @@ export default function Order() {
                                           label: "Đang giao",
                                         },
                                         {
-                                          value: "confirm",
+                                          value: "dielivered",
                                           label: "Đã giao",
                                         },
                                       ]}
