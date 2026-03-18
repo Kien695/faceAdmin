@@ -93,9 +93,13 @@ export default function Dashboard() {
           "success",
           res.message || "Cập nhật trạng thái thành công!",
         );
+        setOrderData((prev) =>
+          prev.map((o) => (o._id === orderId ? res.data : o)),
+        );
       }
     } catch (error) {
       console.error("Lỗi khi cập nhật trạng thái:", error);
+      context.openAlertBox(error, "Lỗi khi cập nhật trạng thái:");
     }
   };
   const handleDelete = async (orderId, productId, size, action) => {
@@ -380,32 +384,41 @@ export default function Dashboard() {
                                           Đơn hàng đã bị hủy
                                         </span>
                                       ) : (
-                                        <Select
-                                          defaultValue={item1?.order_status}
-                                          style={{ width: 170 }}
-                                          onChange={(value) =>
-                                            handleChangeStatus(
-                                              value,
-                                              item._id,
-                                              item1?.productId._id,
-                                              item1?.size,
-                                            )
-                                          }
-                                          options={[
-                                            {
-                                              value: "pending",
-                                              label: "Đang chờ xử lí",
-                                            },
-                                            {
-                                              value: "delivering",
-                                              label: "Đang giao",
-                                            },
-                                            {
-                                              value: "delivered",
-                                              label: "Đã giao",
-                                            },
-                                          ]}
-                                        />
+                                        <>
+                                          {item1?.order_status ===
+                                          "delivered" ? (
+                                            <span className="text-green-500 font-medium">
+                                              Giao hàng thành công
+                                            </span>
+                                          ) : (
+                                            <Select
+                                              defaultValue={item1?.order_status}
+                                              style={{ width: 170 }}
+                                              onChange={(value) =>
+                                                handleChangeStatus(
+                                                  value,
+                                                  item._id,
+                                                  item1?.productId._id,
+                                                  item1?.size,
+                                                )
+                                              }
+                                              options={[
+                                                {
+                                                  value: "pending",
+                                                  label: "Đang chờ xử lí",
+                                                },
+                                                {
+                                                  value: "delivering",
+                                                  label: "Đang giao",
+                                                },
+                                                {
+                                                  value: "delivered",
+                                                  label: "Đã giao",
+                                                },
+                                              ]}
+                                            />
+                                          )}
+                                        </>
                                       )}
                                     </td>
                                     <td className="px-6 py-4">
