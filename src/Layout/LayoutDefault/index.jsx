@@ -141,7 +141,7 @@ const App = () => {
       icon: <FaBlogger />,
       label: "Blogs",
     },
-    context?.userData?.role?.permissions.includes("blog_view") && {
+    context?.userData?.role?.permissions.includes("notification_view") && {
       key: "/notifications",
       icon: <FaRegBell />,
       label: "Thông báo",

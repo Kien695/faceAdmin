@@ -20,6 +20,7 @@ import PrivateRouters from "../PrivateRouter";
 import MyAccount from "../../Pages/MyAccount";
 import UserAdmin from "../../Pages/UserAdmin";
 import Trash from "../../Pages/Trash";
+import Notification from "../../Pages/Notification";
 export const routers = [
   {
     path: "/",
@@ -73,6 +74,10 @@ export const routers = [
       {
         path: "/blogs",
         element: <Blog />,
+      },
+      {
+        path: "/notifications",
+        element: <Notification />,
       },
       {
         path: "/logo",

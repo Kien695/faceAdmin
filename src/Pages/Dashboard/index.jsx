@@ -26,7 +26,7 @@ export default function Dashboard() {
   const [data, setData] = useState({});
   const [revenue, setRevenue] = useState([]);
   const [orderData, setOrderData] = useState([]);
-  const [year, getYear] = useState();
+
   const showOpenCart = (index) => {
     if (isOpenCart === index) {
       setIsOpenCart(null);
@@ -39,7 +39,7 @@ export default function Dashboard() {
     getYear(value);
   };
   const currentYear = new Date().getFullYear();
-
+  const [year, setYear] = useState(currentYear);
   const years = Array.from({ length: 8 }, (_, i) => {
     const year = currentYear - i;
     return {

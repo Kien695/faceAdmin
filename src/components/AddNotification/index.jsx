@@ -1,47 +1,52 @@
+import { Editor } from "@tinymce/tinymce-react";
 import { Button, Flex, Input, Modal, Spin, Upload } from "antd";
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { MyContext } from "../../App";
-import { CiEdit } from "react-icons/ci";
-import { Editor } from "@tinymce/tinymce-react";
-import { patchData } from "../../untils/api";
-export default function EditBlog({ blog, onSuccess }) {
+import { postData } from "../../untils/api";
+export default function AddNotification({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const context = useContext(MyContext);
   const handleClick = () => {
-    if (!context?.userData?.role?.permissions.includes("blog_edit")) {
-      context.openAlertBox("error", "Bạn không có quyền chỉnh sửa!");
+    if (!context?.userData?.role?.permissions.includes("notification_create")) {
+      context.openAlertBox("error", "Bạn không có quyền thêm thông báo!");
       return;
     } else {
       setOpen(true);
     }
   };
-  const uploadButton = (
-    <div className="flex flex-col items-center justify-center border border-dashed hover:border-red-500 border-gray-300 rounded-md p-4 cursor-pointer text-gray-500">
-      <PlusOutlined className="text-xl" />
-      <div className="mt-2">Upload</div>
-    </div>
-  );
-  const [formData, setFormData] = useState({
-    title: blog?.title || "",
-    images: blog?.images || "",
-    description: blog?.description || "",
-  });
 
+  const inputRefs = {
+    title: useRef(),
+  };
+  const [formData, setFormData] = useState({
+    title: "",
+    content: "",
+  });
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    if (!formData.title) {
+      context.openAlertBox("error", "Vui lòng nhập tên thông báo");
+      inputRefs.title.current.focus();
+      setLoading(false);
+      return;
+    }
+    if (!formData.content) {
+      context.openAlertBox("error", "Vui lòng nhập nội dung thông báo");
+      window.tinymce?.activeEditor?.focus();
+      setLoading(false);
+      return;
+    }
+
     try {
-      const body = new FormData();
-      body.append("title", formData.title);
-      body.append("description", formData.description);
-      body.append("images", formData.images);
-      const res = await patchData(`/api/blog/edit/${blog._id}`, body);
+      const res = await postData("/api/notification/create", formData);
       if (res.success) {
         context.openAlertBox("success", res.message);
-        if (onSuccess) onSuccess();
+        setFormData({ title: "", content: "" });
         setOpen(false);
+        if (onSuccess) onSuccess();
       }
     } catch (error) {
       if (error.response) {
@@ -50,17 +55,17 @@ export default function EditBlog({ blog, onSuccess }) {
         context.openAlertBox("error", "Không thể kết nối server!");
       }
     } finally {
-      setLoading(false);
+      setLoading(false); // luôn chạy
     }
   };
   return (
     <Flex vertical gap="middle" align="flex-start">
       {/* Responsive */}
-
-      <CiEdit className="text-[20px] cursor-pointer" onClick={handleClick} />
-
+      <Button color="danger" variant="solid" onClick={handleClick}>
+        Thêm thông báo
+      </Button>
       <Modal
-        title="Thêm Blogs"
+        title="Thêm thông báo"
         centered
         open={open}
         onOk={() => setOpen(false)}
@@ -82,19 +87,18 @@ export default function EditBlog({ blog, onSuccess }) {
               <Input
                 size="large"
                 name="title"
-                value={formData.title}
+                ref={inputRefs.title}
                 onChange={(e) => {
                   setFormData((prev) => ({ ...prev, title: e.target.value }));
                 }}
               />
             </div>
             <div className="flex flex-col gap-1">
-              <div className="text-[15px]">Mô tả </div>
+              <div className="text-[15px]">Nội dung </div>
               <Editor
                 apiKey="0i4qgvltt8xiuzo0ebuptffq6jiefu5i2annb2aysu6abom0"
-                value={formData.description}
-                onEditorChange={(content) => {
-                  setFormData((prev) => ({ ...prev, description: content }));
+                onEditorChange={(context) => {
+                  setFormData((prev) => ({ ...prev, content: context }));
                 }}
                 init={{
                   height: 300,
@@ -105,38 +109,7 @@ export default function EditBlog({ blog, onSuccess }) {
                 }}
               />
             </div>
-            <div>
-              <div className="text-[15px] mb-2">Thêm ảnh</div>
-              <Upload
-                listType="picture"
-                maxCount={1}
-                beforeUpload={() => false}
-                fileList={
-                  formData.images
-                    ? [
-                        {
-                          uid: "-1",
-                          name: "image.png",
-                          status: "done",
-                          url:
-                            typeof formData.images === "string"
-                              ? formData.images // ảnh cũ từ server
-                              : URL.createObjectURL(formData.images), // ảnh mới upload
-                        },
-                      ]
-                    : []
-                }
-                onChange={({ fileList }) => {
-                  const file = fileList[0]?.originFileObj;
-                  setFormData((prev) => ({
-                    ...prev,
-                    images: file || "", // lưu file gốc để gửi FormData sau này
-                  }));
-                }}
-              >
-                {uploadButton}
-              </Upload>
-            </div>
+
             <div className="flex justify-end gap-2 mt-6">
               <Button onClick={() => setOpen(false)}>Hủy bỏ</Button>
               <Button type="primary" htmlType="submit" disabled={loading}>
@@ -145,7 +118,7 @@ export default function EditBlog({ blog, onSuccess }) {
                     <Spin /> Đang xử lí...
                   </div>
                 ) : (
-                  "Cập nhật"
+                  "Thêm mới"
                 )}
               </Button>
             </div>
