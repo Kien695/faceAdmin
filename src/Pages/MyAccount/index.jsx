@@ -28,16 +28,19 @@ export default function MyAccount() {
     ward: "",
   });
   useEffect(() => {
-    if (context?.userData) {
-      setFormInput({
-        name: context.userData.name || "",
-        mobile: context.userData.mobile || "",
-        dateOfBirth: context.userData.dateOfBirth || "",
-        province: context.userData.province || "",
-        district: context.userData.district || "",
-        ward: context.userData.ward || "",
-      });
-    }
+    if (!context?.userData) return;
+
+    setFormInput({
+      name: context.userData.name || "",
+      mobile: context.userData.mobile || "",
+      dateOfBirth: context.userData.dateOfBirth || "",
+      province: context.userData.province || "",
+      district: context.userData.district || "",
+      ward: context.userData.ward || "",
+    });
+
+    // chỉ set code trước
+    setSelectedProvince(context.userData.provinceCode || "");
   }, [context?.userData]);
   const handleInput = (e) => {
     const { name, value } = e.target;
@@ -79,7 +82,7 @@ export default function MyAccount() {
   useEffect(() => {
     // lấy tỉnh
     axios
-      .get("https://provinces.open-api.vn/api/v2/?depth=1")
+      .get("https://provinces.open-api.vn/api/p/?depth=1")
       .then((res) => {
         setProvinces(res.data);
       })
@@ -87,32 +90,33 @@ export default function MyAccount() {
   }, []);
 
   useEffect(() => {
-    if (selectedProvince) {
-      // lấy quận/huyện cho tỉnh đã chọn
-      axios
-        .get(
-          `https://provinces.open-api.vn/api/v2/p/${selectedProvince}?depth=2`,
-        )
-        .then((res) => {
-          setDistricts(res.data.districts || []);
-          setWards([]); // reset ward
-        })
-        .catch(console.error);
-    }
+    if (!selectedProvince) return;
+
+    axios
+      .get(`https://provinces.open-api.vn/api/p/${selectedProvince}?depth=2`)
+      .then((res) => {
+        setDistricts(res.data.districts || []);
+        setWards([]);
+
+        //  set district sau khi có list
+        if (context?.userData?.districtCode) {
+          setSelectedDistrict(context.userData.districtCode);
+        }
+      });
   }, [selectedProvince]);
 
   useEffect(() => {
-    if (selectedDistrict) {
-      // lấy phường/xã
-      axios
-        .get(
-          `https://provinces.open-api.vn/api/v2/d/${selectedDistrict}?depth=2`,
-        )
-        .then((res) => {
-          setWards(res.data.wards || []);
-        })
-        .catch(console.error);
-    }
+    if (!selectedDistrict) return;
+
+    axios
+      .get(`https://provinces.open-api.vn/api/d/${selectedDistrict}?depth=2`)
+      .then((res) => {
+        setWards(res.data.wards || []);
+
+        if (context?.userData?.wardCode) {
+          setSelectedWard(context.userData.wardCode);
+        }
+      });
   }, [selectedDistrict]);
 
   const handleSubmit = async (e) => {
