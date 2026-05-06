@@ -79,7 +79,7 @@ export default function MyAccount() {
   useEffect(() => {
     // lấy tỉnh
     axios
-      .get("https://provinces.open-api.vn/api/v1/?depth=1")
+      .get("https://provinces.open-api.vn/api/v2/?depth=1")
       .then((res) => {
         setProvinces(res.data);
       })
@@ -91,7 +91,7 @@ export default function MyAccount() {
       // lấy quận/huyện cho tỉnh đã chọn
       axios
         .get(
-          `https://provinces.open-api.vn/api/v1/p/${selectedProvince}?depth=2`,
+          `https://provinces.open-api.vn/api/v2/p/${selectedProvince}?depth=2`,
         )
         .then((res) => {
           setDistricts(res.data.districts || []);
@@ -106,7 +106,7 @@ export default function MyAccount() {
       // lấy phường/xã
       axios
         .get(
-          `https://provinces.open-api.vn/api/v1/d/${selectedDistrict}?depth=2`,
+          `https://provinces.open-api.vn/api/v2/d/${selectedDistrict}?depth=2`,
         )
         .then((res) => {
           setWards(res.data.wards || []);
