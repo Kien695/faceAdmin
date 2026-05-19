@@ -69,16 +69,10 @@ const App = () => {
   ];
   const handleLogout = async () => {
     try {
-      const res = await postData(
-        `/api/userAdmin/logout`,
-        {},
-        {
-          withCredentials: true,
-        },
-      );
+      const res = await postData(`/api/userAdmin/logout`);
       if (res.success) {
         localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+
         context.openAlertBox("success", res?.message || "Đăng xuất thành công");
         context.setIsLogin(false);
         context.setUserData(null);
