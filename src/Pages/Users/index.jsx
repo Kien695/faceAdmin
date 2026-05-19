@@ -71,7 +71,7 @@ export default function User() {
       </div>
     ),
     phone: item.mobile,
-    createAt: dayjs(item.createAt).format("YYYY-MM-DD"),
+    createAt: dayjs(item.createdAt).format("YYYY-MM-DD"),
     action: (
       <Space size="middle">
         <DeleteUser onSuccess={() => fetchData()} user={item} />
