@@ -145,11 +145,11 @@ export default function Product() {
         </div>
       </div>
     ),
-    category: item.category.name,
+    category: item?.category?.name || "Chưa xác định",
 
-    price: item.price.toLocaleString("vi-VN") + " đ",
-    discount: item.discountPercentage + "%",
-    stock: item.countInStock,
+    price: item?.price.toLocaleString("vi-VN") + " đ",
+    discount: item?.discountPercentage + "%",
+    stock: item?.countInStock,
     rating: <Rate disabled value={item.rating} style={{ fontSize: 13 }} />,
     action: (
       <Space size="middle">
