@@ -82,16 +82,16 @@ export default function Trash() {
         />
         <div className="flex flex-col gap-1 leading-none">
           <div className="leading-none text-[14px] font-[500] line-clamp-2">
-            {item.name}
+            {item?.name}
           </div>
           <span className="text-[#ff5252]">{item.brand}</span>
         </div>
       </div>
     ),
-    category: item.category.name,
+    category: item?.category?.name,
 
-    price: item.price,
-    dateDelete: item.deletedBy
+    price: item?.price,
+    dateDelete: item?.deletedBy
       ? dayjs(item.deletedBy.deletedAt).format("YYYY-MM-DD")
       : "",
     peopleDelete:
